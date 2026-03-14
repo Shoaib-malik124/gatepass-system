@@ -10,11 +10,11 @@ export const authMiddleware=async(req,res,next)=>{
         else{
             const token=authenticationData.split(' ')[1]
             const secret=process.env.JWT_SECRET
-            const enrollment=await jwt.verify(token,secret)
+            const decodedToken=await jwt.verify(token,secret)
             
             const result = await pool.query(
                 "SELECT enrollment FROM student WHERE enrollment = $1",
-                [enrollment]
+                [decodedToken.enrollment]
             );
 
             if (result.rows.length > 0) {
