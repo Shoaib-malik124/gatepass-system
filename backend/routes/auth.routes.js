@@ -1,5 +1,5 @@
 import express from 'express'
-import { generateToken } from '../config/token.js'
+import { generateToken } from '../utils/token.js'
 import pool from '../config/pool.js'
 import bcrypt from 'bcrypt'
 import { branches, perBranchRoll } from '../constants/constant.js'
@@ -145,9 +145,9 @@ authRouter.post('/login',async(req,res)=>{
                 [email]
                 );
                 if(result.rows.length>0){
-                    const hashedPassword=result.rows[0][2]
+                    const hashedPassword=result.rows[0].password
                     if(await bcrypt.compare(password,hashedPassword)){
-                        const id=result.rows[0][0]
+                        const id=result.rows[0].id
                         const token=generateToken(id)
                         return res.json({success:true,message:'Login Successful',token:token})
                     }
@@ -173,7 +173,7 @@ authRouter.post('/login',async(req,res)=>{
                 if(result.rows.length>0){
                     const hashedPassword=result.rows[0][2]
                     if(await bcrypt.compare(password,hashedPassword)){
-                        const id=result.rows[0][0]
+                        const id=result.rows[0].id
                         const token=generateToken(id)
                         return res.json({success:true,message:'Login Successful',token:token})
                     }

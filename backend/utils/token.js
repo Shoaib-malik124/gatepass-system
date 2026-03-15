@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
-export const generateToken=async(enrollment)=>{
+export const generateToken=async(id)=>{
     try {
         const secret=process.env.JWT_SECRET
         const token=await jwt.sign(
-            {enrollment},
+            {id},
             secret,
             {expiresIn:'1d'}
         )
