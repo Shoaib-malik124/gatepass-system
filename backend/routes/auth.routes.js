@@ -4,7 +4,7 @@ import pool from '../config/pool.js'
 import bcrypt from 'bcrypt'
 import { branches, perBranchRoll } from '../constants/constant.js'
 import { sendOtpEmail } from '../utils/emailSender.js'
-import { client } from '../config/redisConnect.js'
+import { getRedis }  from '../config/redisConnect.js'
 
 const authRouter=express.Router()
 
@@ -48,6 +48,7 @@ authRouter.post('/signup/send-otp',async(req,res)=>{
         }
         else{
             const otp=generateOtp()
+            const client=getRedis()
             await client.setEx(`otp:${email}`, 300, otp)
             return res.json(await sendOtpEmail(email,otp))
         }
@@ -63,6 +64,7 @@ authRouter.post('/signup/verify-otp',async(req,res)=>{
             return res.json({success:false,message:'No otp provided'})
         }
         else{
+            const client=getRedis()
             const originalOtp=await client.get(`otp:${email}`)
             if(originalOtp!=otp){
                 return res.json({success:false,message:'Invalid otp'})

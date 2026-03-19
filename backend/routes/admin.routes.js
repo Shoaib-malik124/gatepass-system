@@ -1,6 +1,6 @@
 import express from 'express'
-import { authMiddleware } from '../middleware/authMiddleware'
-import pool from '../config/pool'
+import { authMiddleware } from '../middleware/authMiddleware.js'
+import pool from '../config/pool.js'
 import bcrypt from 'bcrypt'
 import { sendSecurityMail } from '../utils/emailSender.js'
 
