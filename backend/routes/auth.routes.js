@@ -49,7 +49,7 @@ authRouter.post('/signup/send-otp',async(req,res)=>{
         else{
             const otp=generateOtp()
             const client=getRedis()
-            await client.setEx(`otp:${email}`, 300, otp)
+            await client.setEx(`otp:${email}`, 300, otp.toString())
             return res.json(await sendOtpEmail(email,otp))
         }
     } catch (error) {

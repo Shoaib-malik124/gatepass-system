@@ -1,18 +1,19 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
+import 'dotenv/config'
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_MAIL,
-    pass: process.env.GMAIL_PASS,
-  },
+ service:"gmail",
+    auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+    },
 });
 
 export const sendOtpEmail = async (targetEmail, otp) => {
   const mailOptions = {
-    from: `"NITSRI Portal" <${process.env.GMAIL_MAIL}>`,
+    from: `"NITSRI Portal" <${`${process.env.USER}`}>`,
     to: targetEmail,
-    subject: 'Your Registration OTP',
+    subject: 'Registration OTP',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px;">
         <h2 style="color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">NIT Srinagar Digital Gatepass</h2>
@@ -40,9 +41,9 @@ export const sendOtpEmail = async (targetEmail, otp) => {
 
 export const sendSecurityMail=async(targetEmail,password)=>{
   const mailOptions = {
-    from: `"NITSRI Portal" <${process.env.GMAIL_MAIL}>`,
+    from: `"NITSRI Portal" <${process.env.USER}>`,
     to: targetEmail,
-    subject: 'Your Registration OTP',
+    subject: 'Login Password',
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px;">
         <h2 style="color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">NIT Srinagar Digital Gatepass</h2>

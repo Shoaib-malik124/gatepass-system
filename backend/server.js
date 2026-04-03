@@ -1,7 +1,7 @@
-import express from 'express'
-import cors from 'cors'
 import dotenv from 'dotenv'
 dotenv.config()
+import express from 'express'
+import cors from 'cors'
 import { initRedis } from './config/redisConnect.js';
 import authRouter from './routes/auth.routes.js';
 import adminRouter from './routes/admin.routes.js';
