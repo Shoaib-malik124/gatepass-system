@@ -9,10 +9,10 @@ const adminRouter=express.Router()
 adminRouter.post('/toggleMovement',authMiddleware,async(req,res)=>{
     try {
         await pool.query(
-            "UPDATE gatepass_rules SET movement_allowed = NOT movement_allowed WHERE id = $1",
+            "UPDATE gatepass_rules SET permission = NOT permission WHERE id = $1",
             [1]
         );
-        return res.json({success:true,message:'movement toggle successful'})
+        return res.json({success:true,message:'Permission toggle successful'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
@@ -26,10 +26,10 @@ adminRouter.post('/changeStart',authMiddleware,async(req,res)=>{
         }
         else{
             await pool.query(
-                "UPDATE gatepass_rules SET start_time=$1 WHERE id=$2",
+                "UPDATE gatepass_rules SET min_time=$1 WHERE id=$2",
                 [newStart,1]
             );
-            return res.json({success:true,message:'start time change successfull'})
+            return res.json({success:true,message:'Start time change successfull'})
         }
     } catch (error) {
         return res.json({success:false,message:error.message})
@@ -44,7 +44,7 @@ adminRouter.post('/changeEnd',authMiddleware,async(req,res)=>{
         }
         else{
             await pool.query(
-                "UPDATE gatepass_rules SET end_time=$1 WHERE id=$2",
+                "UPDATE gatepass_rules SET max_time=$1 WHERE id=$2",
                 [newEnd,1]
             )
         }
@@ -62,11 +62,11 @@ adminRouter.post('/changeFine',authMiddleware,async(req,res)=>{
         }
         else{
             await pool.query(
-                "UPDATE gatepass_rules SET fine_rate_per_minute=$1 WHERE id=$2",
+                "UPDATE gatepass_rules SET fine_rate=$1 WHERE id=$2",
                 [newFine,1]
             )
         }
-        return res.json({success:true,message:'fine amount change successfull'})
+        return res.json({success:true,message:'Fine amount change successfull'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
@@ -109,21 +109,11 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
             return res.json({success:false,message:'No email provided'})
         }
         else{
-            const results=await pool.query(
-                "SELECT * FROM security WHERE email=$1",
+            await pool.query(
+                "DELETE FROM security WHERE email = $1",
                 [email]
             );
-
-            if(results.rows.length==0){
-                return res.json({success:false,message:'Invalid email'})
-            }
-            else{
-                await pool.query(
-                    "DELETE FROM security WHERE email = $1",
-                    [email]
-                );
-                return res.json({success:true,message:'security account deleted successfully'})
-            }
+            return res.json({success:true,message:'Security account deleted successfully'})
         }
     } catch (error) {
         return res.json({success:false,message:error.message})

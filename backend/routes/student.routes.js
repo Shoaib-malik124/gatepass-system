@@ -1,6 +1,7 @@
 import express from 'express'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import pool from '../config/pool.js'
+import 'dotenv/config'
 
 const studentRouter=express.Router()
 
@@ -17,14 +18,10 @@ studentRouter.get('/delete',authMiddleware,async(req,res)=>{
     }
 })
 
-studentRouter.get('/logout',authMiddleware,async(req,res)=>{
-    return res.json({success:true,message:'Logout successful'})
-})
-
 studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
     try {
         const permission=await pool.query(
-            "SELECT movement_allowed FROM admin WHERE id=$1",
+            "SELECT permission FROM gatepass_rules WHERE id=$1",
             [1]
         );
         if(!permission){
@@ -32,16 +29,17 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
         }
         else{
             const date=new Date()
-            const time=`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-            const start=await pool.query(
-                "SELECT start_time FROM gatepass_rules WHERE id=$1",
+            const curr_time=`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+            const result=await pool.query(
+                "SELECT min_time,max_time FROM gatepass_rules WHERE id=$1",
                 [1]
             );
+            const start=result.rows[0].min_time,end=result.rows[0].max_time
 
-            if(time<start){
-                return res.json({success:false,message:'Access denied'})
+            if(curr_time<start||curr_time>=end){
+                return res.json({success:false,message:'Access denied,current time lesser than the minimum time'})
             }
-
+            
             else{
                 const enrollment=req.user
                 const fine=await pool.query(
@@ -52,16 +50,24 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                     return res.json({success:false,message:'Fine overdue'})
                 }
                 else{
-                    const date=new Date()
+                    const expiry=curr_time-end
 
                     const result=await pool.query(
-                        "INSERT INTO tokens (enrollment,creation time) values($1,$2) RETURNING id",
-                        [enrollment,`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`]
+                        "INSERT INTO pass (enrollment,creation_time,expiry_time) values($1,$2,$3) RETURNING id",
+                        [enrollment,curr_time,expiry]
                     );
                     return res.json({success:true,message:'Pass granted',tokenId:result.rows[0].id})
                 }
             }
         }
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+})
+
+studentRouter.post('/payFine',authMiddleware,async(req,res)=>{
+    try {
+        // Payment Gateway
     } catch (error) {
         return res.json({success:false,message:error.message})
     }

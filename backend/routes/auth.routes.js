@@ -66,7 +66,7 @@ authRouter.post('/signup/verify-otp',async(req,res)=>{
         else{
             const client=getRedis()
             const originalOtp=await client.get(`otp:${email}`)
-            if(originalOtp!=otp){
+            if(originalOtp!=otp.toString()){
                 return res.json({success:false,message:'Invalid otp'})
             }
             else{

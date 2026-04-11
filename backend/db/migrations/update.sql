@@ -1,0 +1,3 @@
+ALTER TABLE gatepass_rules
+ALTER COLUMN min_time TYPE TIME,
+ALTER COLUMN max_time TYPE TIME;
