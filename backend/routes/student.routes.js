@@ -50,13 +50,21 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                     return res.json({success:false,message:'Fine overdue'})
                 }
                 else{
-                    const expiry=curr_time-end
-
-                    const result=await pool.query(
-                        "INSERT INTO pass (enrollment,creation_time,expiry_time) values($1,$2,$3) RETURNING id",
-                        [enrollment,curr_time,expiry]
+                    const [hours,minutes,seconds]=end.split(':').map(Number)
+                    const expiry = new Date(
+                        now.getFullYear(),  
+                        now.getMonth(),    
+                        now.getDate(),      
+                        hours,              
+                        minutes,            
+                        seconds 
                     );
-                    return res.json({success:true,message:'Pass granted',tokenId:result.rows[0].id})
+                    
+                    const result=await pool.query(
+                        "INSERT INTO pass (enrollment,expiry_time) values($1,$2) RETURNING id",
+                        [enrollment,expiry]
+                    );
+                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment})
                 }
             }
         }
