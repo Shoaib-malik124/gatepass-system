@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
-import { styles } from "../stylesheets/admin_security_auth_styles.js";
+import { styles } from "../stylesheets/studentLoginSignup_styles";
 
-export default function AdminSecurityLogin({route}){
-    const {role}=route.params || {};
-    const [email,setEmail]=useState('');
+export default function StudentLoginSignup({route}){
+    const [enrollment,setEnrollment]=useState('');
     const [password,setPassword]=useState('');
+    const {session}=route.params || {}
 
     return(
        <View style={styles.container}>
@@ -15,14 +15,13 @@ export default function AdminSecurityLogin({route}){
                 style={styles.logo}
                />
 
-               <Text style={styles.title}>Login to your {role} account</Text>
+               <Text style={styles.title}>{session} to your account</Text>
 
-               <Text style={styles.label}>Email</Text>
+               <Text style={styles.label}>Enrollment</Text>
                <TextInput
-                    placeholder="Enter your email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
+                    placeholder="Enter your class enrollment"
+                    value={enrollment}
+                    onChangeText={setEnrollment}
                     autoCapitalize="none" 
                     style={styles.input}
                />
@@ -37,9 +36,9 @@ export default function AdminSecurityLogin({route}){
                />
                
                <TouchableOpacity
-                    style={[styles.button,(!email || !password)&&{backgroundColor:'#ccc'}]}
-                    disabled={!email || !password}
-                    onPress={()=>console.log(email,password,role)}
+                    style={[styles.button,(!enrollment || !password)&&{backgroundColor:'#ccc'}]}
+                    disabled={!enrollment || !password}
+                    onPress={()=>console.log(enrollment,password)}
                >
                 <Text style={styles.buttonText}>Login</Text>
                </TouchableOpacity>
@@ -47,3 +46,4 @@ export default function AdminSecurityLogin({route}){
        </View>
     )
 }
+
