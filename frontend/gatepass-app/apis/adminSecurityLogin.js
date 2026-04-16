@@ -1,0 +1,6 @@
+import axios from 'axios'
+import { BASEURL } from '@env'
+const adminSecurityLoginApi=axios.create({
+    baseURL:"http://10.52.181.185:3000/api/auth"
+})
+export default adminSecurityLoginApi

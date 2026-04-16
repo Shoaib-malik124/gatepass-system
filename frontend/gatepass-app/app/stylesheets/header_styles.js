@@ -5,7 +5,7 @@ const { width } = Dimensions.get('window');
 // 🔥 slightly controlled scaling
 const logoWidth = Math.min(Math.max(width * 0.28, 110), 160);
 
-export const styles = StyleSheet.create({
+export default styles = StyleSheet.create({
   wrapper: {
     backgroundColor: '#ffffff',
     paddingTop: StatusBar.currentHeight || 0,

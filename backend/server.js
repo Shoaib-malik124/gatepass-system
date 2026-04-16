@@ -28,7 +28,7 @@ import { limit } from './middleware/limit.js';
             
             const PORT=process.env.PORT
             await initRedis()
-            app.listen(PORT,()=>{
+            app.listen(PORT,"0.0.0.0",()=>{
                 console.log(`The app is listening on PORT: ${PORT}`)
             })
 

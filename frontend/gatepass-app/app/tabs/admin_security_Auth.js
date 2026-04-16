@@ -1,11 +1,25 @@
 import { useState } from "react"
 import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
 import { styles } from "../stylesheets/admin_security_auth_styles.js";
+import adminSecurityLoginApi from "../../apis/adminSecurityLogin.js";
 
 export default function AdminSecurityLogin({route}){
     const {role}=route.params || {};
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
+
+    const handleLogin=async()=>{
+        try {
+            const res=await adminSecurityLoginApi.post('/login',{
+                role:role,
+                email:email,
+                password:password
+            });
+            console.log(res.data)
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
 
     return(
        <View style={styles.container}>
@@ -39,7 +53,10 @@ export default function AdminSecurityLogin({route}){
                <TouchableOpacity
                     style={[styles.button,(!email || !password)&&{backgroundColor:'#ccc'}]}
                     disabled={!email || !password}
-                    onPress={()=>console.log(email,password,role)}
+                    onPress={()=>{
+                        //axios request to backend
+                        handleLogin()
+                    }}
                >
                 <Text style={styles.buttonText}>Login</Text>
                </TouchableOpacity>
