@@ -1,10 +1,11 @@
 import { View,Text,TextInput,Image,TouchableOpacity } from 'react-native'
 import { useState } from 'react'
 import { styles } from '../stylesheets/studentVerifyOtp_styles.js'
+import handleStudentOtpVerify from '../../apis/studentOtpVerifyApi.js'
 
 export default function StudentVerifyOtp({navigation,route}){
     const [otp,setOtp]=useState('')
-    const {session}=route.params || {}
+    const {session,email}=route.params || {}
     return(
        <View style={styles.container}>
          <View style={styles.card}>
@@ -29,10 +30,16 @@ export default function StudentVerifyOtp({navigation,route}){
             <TouchableOpacity
                 style={[styles.button,!otp && {backgroundColor:'#ccc'}]}
                 disabled={!otp}
-                onPress={()=>{
-                  if(otp){
-                    navigation.navigate('StudentLoginSignupScreen',{session})
+                onPress={async()=>{
+                  const res=await handleStudentOtpVerify(otp,email)
+                  if(res.success==true){
+                    console.log(res.message)
+                    navigation.navigate('StudentLoginSignupScreen',{session,role:"",email})
                   }
+                  else{
+                    console.log(res.message)
+                  }
+                  
                 }}
             >
                 <Text style={styles.buttonText}>Proceed</Text>

@@ -1,6 +1,7 @@
 import {View,Text,TextInput,Image,TouchableOpacity} from 'react-native'
 import { useState } from 'react'
 import { styles } from '../stylesheets/studentOtpSend_styles.js'
+import handleStudentOtpSend from '../../apis/studentOtpSendApi.js'
 
 export default function StudentOtpSend({navigation,route}){
     const [email,setEmail]=useState('')
@@ -29,8 +30,16 @@ export default function StudentOtpSend({navigation,route}){
                 <TouchableOpacity
                     style={[styles.button,!email && {backgroundColor:'#ccc'}]}
                     disabled={!email}
-                    onPress={()=>{
-                        navigation.navigate('StudentVerifyOtpScreen',{session})
+                    onPress={async()=>{
+                        const res=await handleStudentOtpSend(email)
+                        if(res.success==true){
+                           // otp is sent to the mail(if mail was valid)
+                           console.log(res.messageId)
+                           navigation.navigate('StudentVerifyOtpScreen',{session,email})
+                        }
+                        else{
+                           console.log(res.message)
+                        }
                     }}
                 >
                     <Text style={styles.buttonText}>Proceed</Text>

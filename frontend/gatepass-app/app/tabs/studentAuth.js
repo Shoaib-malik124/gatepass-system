@@ -1,7 +1,8 @@
 import { View,Image,Text,TouchableOpacity } from 'react-native'
 import { styles } from '../stylesheets/studentAuth_styles.js'
 
-export default function StudentAuth({navigation}){
+export default function StudentAuth({navigation,route}){
+    const {role}=route.params || {}
     return(
     <View style={styles.container}>
         <View style={styles.card}>
@@ -13,7 +14,7 @@ export default function StudentAuth({navigation}){
             <TouchableOpacity 
              style={styles.button}
              onPress={()=>{
-               navigation.navigate('StudentLoginSignupScreen',{session:'Login'})
+               navigation.navigate('StudentLoginSignupScreen',{session:'login',role,email:""})
              }}
             >
              <Text style={styles.buttonText}>Login</Text>
@@ -22,7 +23,7 @@ export default function StudentAuth({navigation}){
             <TouchableOpacity 
              style={styles.button}
              onPress={()=>{
-               navigation.navigate('StudentOtpSendScreen',{session:'Signup'})
+               navigation.navigate('StudentOtpSendScreen',{session:'signup'})
              }}
             >
              <Text style={styles.buttonText}>Signup</Text>

@@ -1,25 +1,12 @@
 import { useState } from "react"
 import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
 import { styles } from "../stylesheets/admin_security_auth_styles.js";
-import adminSecurityLoginApi from "../../apis/adminSecurityLogin.js";
+import handleAdminSecurityLogin from "../../apis/adminSecurityLoginApi.js";
 
 export default function AdminSecurityLogin({route}){
     const {role}=route.params || {};
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
-
-    const handleLogin=async()=>{
-        try {
-            const res=await adminSecurityLoginApi.post('/login',{
-                role:role,
-                email:email,
-                password:password
-            });
-            console.log(res.data)
-        } catch (error) {
-            console.log(error.message)
-        }
-    }
 
     return(
        <View style={styles.container}>
@@ -53,9 +40,17 @@ export default function AdminSecurityLogin({route}){
                <TouchableOpacity
                     style={[styles.button,(!email || !password)&&{backgroundColor:'#ccc'}]}
                     disabled={!email || !password}
-                    onPress={()=>{
+                    onPress={async()=>{
                         //axios request to backend
-                        handleLogin()
+                        const res=await handleAdminSecurityLogin(role,email,password)
+                        if(res.success==true){
+                            //Get the token from res and navigate to the admin/security page.
+                            console.log(res.message)
+                        }
+                        else{
+                            //Show the reason i.e., res.message in the frontend.
+                            console.log(res.message)
+                        }
                     }}
                >
                 <Text style={styles.buttonText}>Login</Text>

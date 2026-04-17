@@ -8,28 +8,30 @@ import { getRedis }  from '../config/redisConnect.js'
 
 const authRouter=express.Router()
 
-const isValid=(enrollment)=>{
+const isValid = (enrollment) => {
     if (!(/^\d{4}[A-Z]{4}\d{3}$/.test(enrollment))) {
         return false
     }
-    else{
-        const year=enrollment.slice(0,4)
-        const degBranch=enrollment.slice(4,8)
-        const roll=enrollment.slice(8,11)
 
-        const date=new Date()
-        const currentYear=date.getFullYear()
-        if(!(year>=currentYear-4&&year<=currentYear)){
-            return false
-        }
-        else if(!branches.includes(degBranch)){
-            return false
-        }
-        else if(!(roll>='00'&&roll<=perBranchRoll[degBranch.slice(1,4)])){
-            return false
-        }
-        else return true
+    const year = parseInt(enrollment.slice(0, 4), 10)
+    const degBranch = enrollment.slice(4, 8)
+    const roll = parseInt(enrollment.slice(8, 11), 10)
+
+    const currentYear = new Date().getFullYear()
+
+    if (!(year >= currentYear - 4 && year <= currentYear)) {
+        return false
     }
+
+    if (!branches.includes(degBranch)) {
+        return false
+    }
+
+    if (!(roll >= 1 && roll <= perBranchRoll[degBranch])) {
+        return false
+    }
+
+    return true
 }
 
 const generateOtp=()=>{
@@ -60,6 +62,7 @@ authRouter.post('/signup/send-otp',async(req,res)=>{
 authRouter.post('/signup/verify-otp',async(req,res)=>{
     try {
         const otp=req.body.otp
+        const email=req.body.email
         if(!otp){
             return res.json({success:false,message:'No otp provided'})
         }
@@ -70,33 +73,42 @@ authRouter.post('/signup/verify-otp',async(req,res)=>{
                 return res.json({success:false,message:'Invalid otp'})
             }
             else{
-                const enrollment=req.body.enrollment
-                const password=req.body.password
-
-                if((!enrollment)||(!password)){
-                    return res.json({success:false,message:'Incomplete credentials'})
-                }
-                
-                else if(!isValid(enrollment)){
-                    return res.json({success:false,message:'Invalid enrollment'})
-                }
-
-                const result = await pool.query(
-                    "SELECT * FROM student WHERE enrollment = $1",
-                    [enrollment]
-                );
-
-                if (result.rows.length > 0) {
-                    return res.json({success:false,message:'This account already exists'})
-                } else {
-                    hashedPassword=await bcrypt.hash(password,10)
-                    await pool.query(
-                        "INSERT INTO student (enrollment, password) VALUES ($1, $2)",
-                        [enrollment,hashedPassword]
-                    )
-                    return res.json({success:true,message:'Account created successfully'})
-                }
+                return res.json({success:true,message:'Access granted'})
             }
+        }
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+})
+
+authRouter.post('/register',async(req,res)=>{
+    try {
+        const enrollment=req.body.enrollment
+        const password=req.body.password
+        const email=req.body.email
+
+        if((!enrollment)||(!password)){
+            return res.json({success:false,message:'Incomplete credentials'})
+        }
+        
+        else if(!isValid(enrollment)){
+            return res.json({success:false,message:'Invalid enrollment'})
+        }
+
+        const result = await pool.query(
+            "SELECT * FROM student WHERE enrollment = $1",
+            [enrollment]
+        );
+
+        if (result.rows.length > 0) {
+            return res.json({success:false,message:'This account already exists'})
+        } else {
+            const hashedPassword=await bcrypt.hash(password,10)
+            await pool.query(
+                "INSERT INTO student (enrollment,password,collegemail) VALUES ($1, $2, $3)",
+                [enrollment,hashedPassword,email]
+            )
+            return res.json({success:true,message:'Account created successfully'})
         }
     } catch (error) {
         return res.json({success:false,message:error.message})
