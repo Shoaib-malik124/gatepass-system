@@ -1,12 +1,8 @@
-import axios from 'axios'
-
-const studentLoginApi=axios.create({
-    baseURL:"http://10.52.181.185:3000/api/auth"
-})
+import authCaller from "../constants/authCaller.js";
 
 const handleStudentLogin=async(role,enrollment,password)=>{
     try {
-        const res=await studentLoginApi.post('/login',{
+        const res=await authCaller.post('/login',{
             role:role,
             enrollment:enrollment,
             password:password

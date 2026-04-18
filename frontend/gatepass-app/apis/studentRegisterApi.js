@@ -1,12 +1,9 @@
 import axios from "axios";
-
-const studentRegisterApi=axios.create({
-    baseURL:"http://10.52.181.185:3000/api/auth"
-})
+import authCaller from "../constants/authCaller.js";
 
 const handleStudentRegister=async(enrollment,password,email)=>{
     try {
-        const res=await studentRegisterApi.post('/register',{
+        const res=await authCaller.post('/register',{
            enrollment:enrollment,
            password:password,
            email:email

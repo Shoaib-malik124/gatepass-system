@@ -1,12 +1,9 @@
 import axios from "axios";
-
-const studentOtpVerifyApi=axios.create({
-    baseURL:"http://10.52.181.185:3000/api/auth"
-})
+import authCaller from "../constants/authCaller.js";
 
 const handleStudentOtpVerify=async(otp,email)=>{
     try {
-        const res=await studentOtpVerifyApi.post('/signup/verify-otp',{
+        const res=await authCaller.post('/signup/verify-otp',{
             otp:otp,
             email:email
         })

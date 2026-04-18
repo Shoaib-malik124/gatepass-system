@@ -7,6 +7,7 @@ import StudentVerifyOtp from './tabs/studentVerifyOtp.js'
 import StudentAuth from './tabs/studentAuth.js'
 import StudentLoginSignup from './tabs/studentLoginSignup.js'
 import AppHeader from './tabs/header.js'
+import StudentDashboard from './tabs/studentDashboard.js'
 
 
 const Stack=createNativeStackNavigator()
@@ -47,6 +48,12 @@ export default function App(){
           <Stack.Screen
             name='StudentLoginSignupScreen'
             component={StudentLoginSignup}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='StudentDashboardScreen'
+            component={StudentDashboard}
             options={{ headerShown: false }}
           />
 

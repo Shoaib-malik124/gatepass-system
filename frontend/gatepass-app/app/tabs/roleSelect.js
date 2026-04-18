@@ -3,10 +3,13 @@ import RNPickerSelect from 'react-native-picker-select';
 import { useState } from 'react';
 import AppHeader from './header.js';
 import { styles } from '../stylesheets/roleSelect_styles.js';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store'; // Device's local storage.
+import {jwtDecode} from 'jwt-decode'
 
 export default function RoleSelectScreen({navigation}) {
-  const [role, setRole] = useState(null);
-  
+  const [role,setRole]=useState(null);
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -33,17 +36,40 @@ export default function RoleSelectScreen({navigation}) {
           style={[styles.button, !role && { backgroundColor: '#ccc' }]}
           disabled={!role}
           onPress={
-            () =>{
-              if(role=='security'||role=='admin'){
-                // call the login page for security/admin
-                navigation.navigate('AdminSecurityLoginScreen',{role})
+            async() =>{
+              const token=await SecureStore.getItemAsync('token');
+              if(token){
+                const decodedToken=jwtDecode(token) // not powerful as the jwt.verify, but can give the expiry.
+                const current_time=Date.now()/1000 // jwt stores creation time and expiry time in seconds.
+                if(current_time<decodedToken.exp){
+                  if(role=='student'){
+                    navigation.navigate('StudentDashboardScreen',{token})
+                  }
+                  else{
+                    // navigate to the admin/security dashboard.
+                  }
+                }
+                else{
+                  await SecureStore.deleteItemAsync('token')
+                  if(role=='student'){
+                    navigation.navigate('StudentAuthScreen',{role})
+                  }
+                  else{
+                    // navigate to the admin/security login screen.
+                    navigation.navigate('AdminSecurityLoginScreen',{role})
+                  }
+                }
               }
               else{
-                // call the login page for student
-                navigation.navigate('StudentAuthScreen',{role})
+                if(role=='student'){
+                  navigation.navigate('StudentAuthScreen',{role})
+                }
+                else{
+                  navigation.navigate('AdminSecurityLoginScreen',{role})
+                }
               }
             }
-          } // Through this, go to the next page.
+          }
         >
           <Text style={styles.buttonText}>Proceed</Text>
         </TouchableOpacity>

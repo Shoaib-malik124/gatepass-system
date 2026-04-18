@@ -3,8 +3,10 @@ import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
 import { styles } from "../stylesheets/studentLoginSignup_styles.js";
 import handleStudentLogin from "../../apis/studentLoginApi.js";
 import handleStudentRegister from "../../apis/studentRegisterApi.js";
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
-export default function StudentLoginSignup({route}){
+export default function StudentLoginSignup({navigation,route}){
     const [enrollment,setEnrollment]=useState('');
     const [password,setPassword]=useState('');
     const {session,role,email}=route.params|| {}
@@ -45,6 +47,10 @@ export default function StudentLoginSignup({route}){
                             const res=await handleStudentLogin(role,enrollment,password)
                             if(res.success==true){
                               console.log(res.token)
+
+                              const token=res.token
+                              await SecureStore.setItemAsync(`token`,token);
+                              navigation.navigate('StudentDashboardScreen',{token})
                             }
                             else{
                               console.log(res.message)

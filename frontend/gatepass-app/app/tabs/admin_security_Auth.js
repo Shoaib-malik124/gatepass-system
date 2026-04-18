@@ -2,6 +2,8 @@ import { useState } from "react"
 import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
 import { styles } from "../stylesheets/admin_security_auth_styles.js";
 import handleAdminSecurityLogin from "../../apis/adminSecurityLoginApi.js";
+import * as SecureStore from 'expo-secure-store';
+
 
 export default function AdminSecurityLogin({route}){
     const {role}=route.params || {};
@@ -44,7 +46,10 @@ export default function AdminSecurityLogin({route}){
                         //axios request to backend
                         const res=await handleAdminSecurityLogin(role,email,password)
                         if(res.success==true){
-                            //Get the token from res and navigate to the admin/security page.
+                            //Get the token from res,store in local and navigate to the admin/security dashboard.
+                            const token=res.token
+                            await SecureStore.setItemAsync(`token`,token);
+                            //navigate to admin/security dashboard.
                             console.log(res.message)
                         }
                         else{
