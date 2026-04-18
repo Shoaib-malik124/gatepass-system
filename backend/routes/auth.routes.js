@@ -137,10 +137,10 @@ authRouter.post('/login',async(req,res)=>{
                     return res.json({success:false,message:'This account does not exist'})
                 }
                 else{
-                    const hashedPassword=result.rows[0][2]
+                    const hashedPassword=result.rows[0].password
                     if(await bcrypt.compare(password,hashedPassword)){
                         const token=await generateToken(enrollment)
-                        return res.json({success:true,message:`Login successful, token: ${token}`})
+                        return res.json({success:true,message:`Login successful`,token:token})
                     }
                     else{
                         return res.json({success:false,message:'Password is not matching'})
