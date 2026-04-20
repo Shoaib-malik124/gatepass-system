@@ -1,18 +1,62 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/student_dashboard_styles.js';
-import handleStudentDashboardPass from '../../apis/studentDashboardApi.js';
+import * as SecureStore from 'expo-secure-store';
+import handleStudentDashboard from '../../apis/studentDashboardApi.js';
 
+export default function StudentDashboard({ navigation,route }) {
+  const { token } = route.params || {};
 
-export default function StudentDashboard({ route }) {
-  const {token}=route.params || {}
   return (
     <LinearGradient
       colors={['#4facfe', '#00f2fe']}
       style={styles.container}
     >
-      
+
+      {/* Top Left Button */}
+      <View style={styles.topLeftContainer}>
+        <TouchableOpacity style={styles.topButton}>
+          <Text 
+            style={styles.topButtonText}
+            disabled={true}
+          >
+          Gatepass Token
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Top Right Buttons */}
+      <View style={styles.topRightContainer}>
+        <TouchableOpacity style={styles.topButton}
+          onPress={
+            async()=>{
+              await SecureStore.deleteItemAsync('token')
+              navigation.navigate('StudentLoginSignupScreen',{session:'login',role:'student'})
+            }
+          }
+        >
+          <Text style={styles.topButtonText}>Logout</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.topButton, styles.deleteButton]}
+          onPress={
+            async()=>{
+              const res=await handleStudentDashboard(token,'delete','get');
+              if(res.success==true){
+                navigation.navigate('StudentOtpSendScreen')
+              }
+              else{
+                console.log(res.message)
+              }
+            }
+          }
+        >
+          <Text style={styles.topButtonText}>Delete Account</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Card 1 */}
       <View style={styles.card}>
         <View style={styles.iconContainer}>
@@ -22,18 +66,12 @@ export default function StudentDashboard({ route }) {
         <Text style={styles.title}>Request Pass</Text>
         <Text style={styles.subtitle}>Apply for a new gate pass</Text>
 
-        <TouchableOpacity style={styles.button}
-          onPress={
-            async()=>{
-              const res=await handleStudentDashboardPass(token)
-              if(res.success==true){
-                console.log(res.message)
-              }
-              else{
-                console.log(res.message)
-              }
-            }
-          }
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            const res=await handleStudentDashboard(token,'requestPass','post');
+            console.log(res.message);
+          }}
         >
           <Text style={styles.buttonText}>Apply</Text>
         </TouchableOpacity>
@@ -48,13 +86,7 @@ export default function StudentDashboard({ route }) {
         <Text style={styles.title}>Pay Fine</Text>
         <Text style={styles.subtitle}>Clear your pending dues</Text>
 
-        <TouchableOpacity style={styles.button}
-          onPress={
-            ()=>{
-
-            }
-          }
-        >
+        <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Proceed</Text>
         </TouchableOpacity>
       </View>

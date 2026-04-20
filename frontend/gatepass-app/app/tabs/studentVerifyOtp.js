@@ -5,7 +5,7 @@ import handleStudentOtpVerify from '../../apis/studentOtpVerifyApi.js'
 
 export default function StudentVerifyOtp({navigation,route}){
     const [otp,setOtp]=useState('')
-    const {session,email}=route.params || {}
+    const {email}=route.params || {}
     return(
        <View style={styles.container}>
          <View style={styles.card}>
@@ -34,7 +34,7 @@ export default function StudentVerifyOtp({navigation,route}){
                   const res=await handleStudentOtpVerify(otp,email)
                   if(res.success==true){
                     console.log(res.message)
-                    navigation.navigate('StudentLoginSignupScreen',{session,role:"",email})
+                    navigation.navigate('StudentLoginSignupScreen',{session:'signup',role:"",email})
                   }
                   else{
                     console.log(res.message)

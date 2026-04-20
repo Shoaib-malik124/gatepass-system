@@ -23,7 +23,7 @@ export default function StudentAuth({navigation,route}){
             <TouchableOpacity 
              style={styles.button}
              onPress={()=>{
-               navigation.navigate('StudentOtpSendScreen',{session:'signup'})
+               navigation.navigate('StudentOtpSendScreen')
              }}
             >
              <Text style={styles.buttonText}>Signup</Text>

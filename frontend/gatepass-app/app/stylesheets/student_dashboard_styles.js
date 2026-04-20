@@ -7,19 +7,52 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  /* 🔥 Top Left Button */
+  topLeftContainer: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    zIndex: 10,
+  },
+
+  /* 🔥 Top Right Buttons */
+  topRightContainer: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    flexDirection: 'row',
+    gap: 10,
+    zIndex: 10,
+  },
+
+  topButton: {
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+
+  deleteButton: {
+    backgroundColor: '#ff4d4d',
+  },
+
+  topButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+  },
+
   card: {
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
 
-    // iOS shadow
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
 
-    // Android shadow
     elevation: 6,
   },
 

@@ -5,7 +5,6 @@ import handleStudentOtpSend from '../../apis/studentOtpSendApi.js'
 
 export default function StudentOtpSend({navigation,route}){
     const [email,setEmail]=useState('')
-    const {session}=route.params || {}
     return(
        <View style={styles.container}>
             <View style={styles.card}>
@@ -35,7 +34,7 @@ export default function StudentOtpSend({navigation,route}){
                         if(res.success==true){
                            // otp is sent to the mail(if mail was valid)
                            console.log(res.messageId)
-                           navigation.navigate('StudentVerifyOtpScreen',{session,email})
+                           navigation.navigate('StudentVerifyOtpScreen',{email})
                         }
                         else{
                            console.log(res.message)

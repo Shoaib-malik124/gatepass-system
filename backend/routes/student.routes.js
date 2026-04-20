@@ -12,7 +12,7 @@ studentRouter.get('/delete',authMiddleware,async(req,res)=>{
             "DELETE FROM student WHERE enrollment = $1",
             [enrollment]
         );
-        return res.json({success:false,message:'Account removed successfully'})
+        return res.json({success:true,message:'Account removed successfully'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
