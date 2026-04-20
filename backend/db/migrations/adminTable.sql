@@ -1,5 +1,5 @@
 CREATE TABLE admin(
    id SERIAL PRIMARY KEY,
    email VARCHAR UNIQUE NOT NULL,
-   password VARCHAR(12)
+   password VARCHAR(100)
 );

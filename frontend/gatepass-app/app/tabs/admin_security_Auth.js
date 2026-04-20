@@ -5,7 +5,7 @@ import handleAdminSecurityLogin from "../../apis/adminSecurityLoginApi.js";
 import * as SecureStore from 'expo-secure-store';
 
 
-export default function AdminSecurityLogin({route}){
+export default function AdminSecurityLogin({navigation,route}){
     const {role}=route.params || {};
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
@@ -50,7 +50,7 @@ export default function AdminSecurityLogin({route}){
                             const token=res.token
                             await SecureStore.setItemAsync(`token`,token);
                             //navigate to admin/security dashboard.
-                            console.log(res.message)
+                            navigation.navigate('AdminDashboardScreen',{token});
                         }
                         else{
                             //Show the reason i.e., res.message in the frontend.

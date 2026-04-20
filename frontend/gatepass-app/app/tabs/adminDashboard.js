@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { styles } from '../stylesheets/student_dashboard_styles.js';
+import { styles } from '../stylesheets/adminDashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
-import handleStudentDashboard from '../../apis/studentDashboardApi.js';
+import handleAdminDashboard from '../../apis/adminDashboardApi.js';
 
-export default function StudentDashboard({ navigation,route }) {
+export default function AdminDashboard({ navigation,route }) {
   const { token } = route.params || {};
 
   return (
@@ -14,25 +14,13 @@ export default function StudentDashboard({ navigation,route }) {
       style={styles.container}
     >
 
-      {/* Top Left Button */}
-      <View style={styles.topLeftContainer}>
-        <TouchableOpacity style={styles.topButton}>
-          <Text 
-            style={styles.topButtonText}
-            disabled={true}
-          >
-          Gatepass Token
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Top Right Buttons */}
       <View style={styles.topRightContainer}>
         <TouchableOpacity style={styles.topButton}
           onPress={
             async()=>{
               await SecureStore.deleteItemAsync('token')
-              navigation.navigate('StudentLoginSignupScreen',{session:'login',role:'student'})
+              navigation.navigate('AdminSecurityLoginScreen',{role:'admin'})
             }
           }
         >
@@ -43,10 +31,10 @@ export default function StudentDashboard({ navigation,route }) {
           style={[styles.topButton, styles.deleteButton]}
           onPress={
             async()=>{
-              const res=await handleStudentDashboard(token,'delete','get');
+              const res=await handleAdminDashboard(token,'delete','get');
               await SecureStore.deleteItemAsync('token');
               if(res.success==true){
-                navigation.navigate('StudentOtpSendScreen')
+                navigation.navigate('RoleSelectionScreen')
               }
               else{
                 console.log(res.message)
@@ -64,31 +52,16 @@ export default function StudentDashboard({ navigation,route }) {
           <Ionicons name="document-text-outline" size={28} color="#4facfe" />
         </View>
 
-        <Text style={styles.title}>Request Pass</Text>
-        <Text style={styles.subtitle}>Apply for a new gate pass</Text>
+        <Text style={styles.title}>Set rules</Text>
 
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
-            const res=await handleStudentDashboard(token,'requestPass','post');
+            // const res=await handleAdminDashboard(token,'requestPass','post');
             console.log(res.message);
           }}
         >
           <Text style={styles.buttonText}>Apply</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Card 2 */}
-      <View style={styles.card}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="card-outline" size={28} color="#00c6ff" />
-        </View>
-
-        <Text style={styles.title}>Pay Fine</Text>
-        <Text style={styles.subtitle}>Clear your pending dues</Text>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Proceed</Text>
         </TouchableOpacity>
       </View>
 

@@ -8,6 +8,7 @@ import StudentAuth from './tabs/studentAuth.js'
 import StudentLoginSignup from './tabs/studentLoginSignup.js'
 import AppHeader from './tabs/header.js'
 import StudentDashboard from './tabs/studentDashboard.js'
+import AdminDashboard from './tabs/adminDashboard.js'
 
 
 const Stack=createNativeStackNavigator()
@@ -54,6 +55,12 @@ export default function App(){
           <Stack.Screen
             name='StudentDashboardScreen'
             component={StudentDashboard}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='AdminDashboardScreen'
+            component={AdminDashboard}
             options={{ headerShown: false }}
           />
 

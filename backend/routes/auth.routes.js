@@ -155,14 +155,14 @@ authRouter.post('/login',async(req,res)=>{
             }
             else{
                 const result=await pool.query(
-                "SELECT * FROM security WHERE email=$1",
-                [email]
+                    "SELECT * FROM security WHERE email=$1",
+                    [email]
                 );
                 if(result.rows.length>0){
                     const hashedPassword=result.rows[0].password
                     if(await bcrypt.compare(password,hashedPassword)){
                         const id=result.rows[0].id
-                        const token=generateToken(id)
+                        const token=await generateToken(id)
                         return res.json({success:true,message:'Login Successful',token:token})
                     }
                     else{
@@ -185,10 +185,10 @@ authRouter.post('/login',async(req,res)=>{
                 [email]
                 );
                 if(result.rows.length>0){
-                    const hashedPassword=result.rows[0][2]
+                    const hashedPassword=result.rows[0].password
                     if(await bcrypt.compare(password,hashedPassword)){
                         const id=result.rows[0].id
-                        const token=generateToken(id)
+                        const token=await generateToken(id)
                         return res.json({success:true,message:'Login Successful',token:token})
                     }
                     else{

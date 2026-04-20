@@ -120,4 +120,17 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
     }
 })
 
+adminRouter.get('/delete',authMiddleware,async(req,res)=>{
+    try {
+        const id=req.user
+        await pool.query(
+            "DELETE FROM admin WHERE id=$1",
+            [id]
+        )
+        return res.json({success:true,message:'Account deleted successfully'})
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+})
+
 export default adminRouter
