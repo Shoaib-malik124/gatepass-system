@@ -60,9 +60,13 @@ export default function StudentLoginSignup({navigation,route}){
                             const res=await handleStudentRegister(enrollment,password,email)
                             if(res.success==true){
                               console.log(res.message)
+                              navigation.navigate('StudentLoginSignupScreen',{session:'login',role:'student'})
                             }
                             else{
                               console.log(res.message)
+                              if(res.message=='This account already exists'){
+                                navigation.navigate('StudentLoginSignupScreen',{session:'login',role:'student'})
+                              }
                             }
                         }
                     }}

@@ -45,9 +45,12 @@ export default function RoleSelectScreen({navigation}) {
                   if(role=='student'){
                     navigation.navigate('StudentDashboardScreen',{token})
                   }
-                  else{
-                    // navigate to the admin/security dashboard.
+                  else if(role=='admin'){
+                    // navigate to the admin dashboard.
                     navigation.navigate('AdminDashboardScreen',{token})
+                  }
+                  else{
+                    // navigate to the admin dashboard.
                   }
                 }
                 else{

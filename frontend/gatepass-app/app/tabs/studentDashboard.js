@@ -32,7 +32,14 @@ export default function StudentDashboard({ navigation,route }) {
           onPress={
             async()=>{
               await SecureStore.deleteItemAsync('token')
-              navigation.navigate('StudentLoginSignupScreen',{session:'login',role:'student'})
+              navigation.reset({
+                index:0,
+                routes:[
+                  {
+                    name:'RoleSelectionScreen'
+                  }
+                ]
+              });
             }
           }
         >
@@ -46,7 +53,14 @@ export default function StudentDashboard({ navigation,route }) {
               const res=await handleStudentDashboard(token,'delete','get');
               await SecureStore.deleteItemAsync('token');
               if(res.success==true){
-                navigation.navigate('StudentOtpSendScreen')
+                navigation.reset({
+                  index:0,
+                  routes:[
+                    {
+                      name:'RoleSelectionScreen'
+                    }
+                  ]
+                });
               }
               else{
                 console.log(res.message)

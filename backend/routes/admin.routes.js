@@ -6,67 +6,14 @@ import { sendSecurityMail } from '../utils/emailSender.js'
 
 const adminRouter=express.Router()
 
-adminRouter.post('/toggleMovement',authMiddleware,async(req,res)=>{
+adminRouter.get('/delete',authMiddleware,async(req,res)=>{
     try {
+        const id=req.user
         await pool.query(
-            "UPDATE gatepass_rules SET permission = NOT permission WHERE id = $1",
-            [1]
-        );
-        return res.json({success:true,message:'Permission toggle successful'})
-    } catch (error) {
-        return res.json({success:false,message:error.message})
-    }
-})
-
-adminRouter.post('/changeStart',authMiddleware,async(req,res)=>{
-    try {
-        const newStart=req.body.start
-        if(!newStart){
-            return res.json({success:false,message:'No start time provided'})
-        }
-        else{
-            await pool.query(
-                "UPDATE gatepass_rules SET min_time=$1 WHERE id=$2",
-                [newStart,1]
-            );
-            return res.json({success:true,message:'Start time change successfull'})
-        }
-    } catch (error) {
-        return res.json({success:false,message:error.message})
-    }
-})
-
-adminRouter.post('/changeEnd',authMiddleware,async(req,res)=>{
-    try {
-        const newEnd=req.body.end
-        if(!newEnd){
-            return res.json({success:false,message:'No end time provided'})
-        }
-        else{
-            await pool.query(
-                "UPDATE gatepass_rules SET max_time=$1 WHERE id=$2",
-                [newEnd,1]
-            )
-        }
-        return res.json({success:true,message:'end time change successfull'})
-    } catch (error) {
-        return res.json({success:false,message:error.message})
-    }
-})
-
-adminRouter.post('/changeFine',authMiddleware,async(req,res)=>{
-    try {
-        const newFine=req.body.fine
-        if(!newFine){
-            return res.json({success:false,message:'No fine amount provided'})
-        }
-        else{
-            await pool.query(
-                "UPDATE gatepass_rules SET fine_rate=$1 WHERE id=$2",
-                [newFine,1]
-            )
-        }
-        return res.json({success:true,message:'Fine amount change successfull'})
+            "DELETE FROM admin WHERE id=$1",
+            [id]
+        )
+        return res.json({success:true,message:'Account deleted successfully'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
@@ -93,11 +40,13 @@ adminRouter.post('/addSecurity',authMiddleware,async(req,res)=>{
                    "INSERT INTO security (email, password) VALUES ($1, $2)",
                     [email,hashedPassword]
                 );
-                return res.json(await sendSecurityMail(email,password))
+                const response=await sendSecurityMail(email,password)
+                return res.json(response)
             }
         }
 
     } catch (error) {
+        // If account was created but mail send failed, then delete the security account.
         return res.json({success:false,message:error.message})
     }
 })
@@ -120,14 +69,26 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
     }
 })
 
-adminRouter.get('/delete',authMiddleware,async(req,res)=>{
+adminRouter.post('/setRules',authMiddleware,async(req,res)=>{
     try {
-        const id=req.user
-        await pool.query(
-            "DELETE FROM admin WHERE id=$1",
-            [id]
-        )
-        return res.json({success:true,message:'Account deleted successfully'})
+      let {movement,start,end,fine}=req.body
+      const response=await pool.query(
+        "SELECT permission,min_time,max_time,fine_rate FROM gatepass_rules WHERE id= $1",
+        [1]
+      );
+
+      if(!movement)movement=response.rows[0].permission
+      if(!start)start=response.rows[0].min_time
+      if(!end)end=response.rows[0].max_time
+      if(!fine)fine=response.rows[0].fine_rate
+
+      await pool.query(
+        "UPDATE gatepass_rules SET permission=$1,min_time=$2,max_time=$3,fine_rate=$4 WHERE id=$5",
+        [movement,start,end,fine,1]
+      )
+
+      return res.json({success:true,message:'Gatepass rules updated successfully'})
+
     } catch (error) {
         return res.json({success:false,message:error.message})
     }

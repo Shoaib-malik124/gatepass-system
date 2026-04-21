@@ -3,8 +3,12 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+
+  scrollContainer: {
     padding: 20,
-    justifyContent: 'center',
+    paddingTop: 120, // space for top buttons
+    paddingBottom: 40,
   },
 
   topRightContainer: {
@@ -34,7 +38,7 @@ export const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
@@ -59,6 +63,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#333',
+    marginBottom: 10,
   },
 
   button: {
@@ -66,6 +71,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
+    marginTop: 10,
   },
 
   buttonText: {
