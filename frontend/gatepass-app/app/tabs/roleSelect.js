@@ -50,7 +50,7 @@ export default function RoleSelectScreen({navigation}) {
                     navigation.navigate('AdminDashboardScreen',{token})
                   }
                   else{
-                    // navigate to the admin dashboard.
+                    // navigate to the security dashboard.
                   }
                 }
                 else{

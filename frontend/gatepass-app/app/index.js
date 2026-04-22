@@ -10,6 +10,8 @@ import AppHeader from './tabs/header.js'
 import StudentDashboard from './tabs/studentDashboard.js'
 import AdminDashboard from './tabs/adminDashboard.js'
 import SetRules from './tabs/rulesSet.js'
+import SecurityAdd from './tabs/securityAdd.js'
+import SecurityRemove from './tabs/securityRemove.js'
 
 
 const Stack=createNativeStackNavigator()
@@ -68,6 +70,18 @@ export default function App(){
           <Stack.Screen
             name='SetRulesScreen'
             component={SetRules}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='SecurityAddScreen'
+            component={SecurityAdd}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='SecurityRemoveScreen'
+            component={SecurityRemove}
             options={{ headerShown: false }}
           />
 

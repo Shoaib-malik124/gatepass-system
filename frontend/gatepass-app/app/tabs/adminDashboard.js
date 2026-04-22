@@ -82,7 +82,7 @@ export default function AdminDashboard({ navigation, route }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              
+              navigation.navigate('SecurityAddScreen',{token})
             }}
           >
             <Text style={styles.buttonText}>Open</Text>
@@ -100,7 +100,7 @@ export default function AdminDashboard({ navigation, route }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              
+              navigation.navigate('SecurityRemoveScreen',{token})
             }}
           >
             <Text style={styles.buttonText}>Open</Text>

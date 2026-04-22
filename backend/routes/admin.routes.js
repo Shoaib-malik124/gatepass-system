@@ -2,7 +2,7 @@ import express from 'express'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import pool from '../config/pool.js'
 import bcrypt from 'bcrypt'
-import { sendSecurityMail } from '../utils/emailSender.js'
+import { sendSecurityOffMail, sendSecurityOnMail } from '../utils/emailSender.js'
 
 const adminRouter=express.Router()
 
@@ -40,7 +40,7 @@ adminRouter.post('/addSecurity',authMiddleware,async(req,res)=>{
                    "INSERT INTO security (email, password) VALUES ($1, $2)",
                     [email,hashedPassword]
                 );
-                const response=await sendSecurityMail(email,password)
+                const response=await sendSecurityOnMail(email,password)
                 return res.json(response)
             }
         }
@@ -58,11 +58,17 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
             return res.json({success:false,message:'No email provided'})
         }
         else{
-            await pool.query(
+            const result=await pool.query(
                 "DELETE FROM security WHERE email = $1",
                 [email]
             );
-            return res.json({success:true,message:'Security account deleted successfully'})
+            if(result.rowCount===0){
+               return res.json({success:false,message:'This account does not exist'})
+            }
+            else{
+               const response=await sendSecurityOffMail(email)
+               return response
+            }
         }
     } catch (error) {
         return res.json({success:false,message:error.message})
@@ -72,6 +78,7 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
 adminRouter.post('/setRules',authMiddleware,async(req,res)=>{
     try {
       let {movement,start,end,fine}=req.body
+      
       const response=await pool.query(
         "SELECT permission,min_time,max_time,fine_rate FROM gatepass_rules WHERE id= $1",
         [1]

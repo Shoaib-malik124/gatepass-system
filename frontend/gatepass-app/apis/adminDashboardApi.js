@@ -4,7 +4,11 @@ import * as SecureStore from 'expo-secure-store';
 const handleAdminDashboard=async(jwt_token,route,request)=>{
     if(request=='post'){
        try {
-            const res=await adminDashboardCaller.post(`/${route}`,{},{
+            const res=await adminDashboardCaller.post(`/${route}`,
+                {
+
+                },
+                {
                 headers: {
                     authorization: `Bearer ${jwt_token}`
                 }

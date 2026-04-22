@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from "../stylesheets/setRules_styles.js";
+import handleRulesSet from "../../apis/rulesSetApi.js";
 
 export default function SetRules({ navigation, route }) {
   const [permission, setPermission] = useState(true);
@@ -64,13 +65,21 @@ export default function SetRules({ navigation, route }) {
         {/* Button */}
         <TouchableOpacity
           style={[
-            styles.button,
-            
+            styles.button,(!start)&&(!end)&&(!fine)&&({backgroundColor:'#ccc'})
           ]}
+          disabled={(!start)&&(!end)&&(!fine)}
           
-          onPress={() => {
-            
-          }}
+          onPress={
+            async() => {
+              const res=await handleRulesSet(token,permission,start,end,fine)
+              if(res.success==true){
+                console.log(res.message)
+              }
+              else{
+                console.log(res.message)
+              }
+            }
+          }
         >
           <Text style={styles.buttonText}>Apply Rules</Text>
         </TouchableOpacity>
