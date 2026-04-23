@@ -67,7 +67,7 @@ adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
             }
             else{
                const response=await sendSecurityOffMail(email)
-               return response
+               return res.json(response)
             }
         }
     } catch (error) {

@@ -2,6 +2,7 @@ import express from 'express'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import pool from '../config/pool.js'
 import 'dotenv/config'
+import { generateQr } from '../utils/generateQR.js'
 
 const studentRouter=express.Router()
 
@@ -64,7 +65,8 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                         "INSERT INTO pass (enrollment,expiry_time) values($1,$2) RETURNING id",
                         [enrollment,expiry]
                     );
-                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment})
+                    const qr=generateQr(enrollment)
+                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment,qr:qr})
                 }
             }
         }

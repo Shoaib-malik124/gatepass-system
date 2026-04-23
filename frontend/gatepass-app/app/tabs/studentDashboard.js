@@ -4,9 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/student_dashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
 import handleStudentDashboard from '../../apis/studentDashboardApi.js';
+import { useState } from 'react';
 
 export default function StudentDashboard({ navigation,route }) {
   const { token } = route.params || {};
+  const [isQR,setQR]=useState(false)
 
   return (
     <LinearGradient
@@ -85,6 +87,7 @@ export default function StudentDashboard({ navigation,route }) {
           style={styles.button}
           onPress={async () => {
             const res=await handleStudentDashboard(token,'requestPass','post');
+            if(res.success)setQR(true)
             console.log(res.message);
           }}
         >
@@ -102,6 +105,28 @@ export default function StudentDashboard({ navigation,route }) {
         <Text style={styles.subtitle}>Clear your pending dues</Text>
 
         <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Proceed</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Card 3 */}
+      <View style={styles.card}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="card-outline" size={28} color="#00c6ff" />
+        </View>
+
+        <Text style={styles.title}>Show QR</Text>
+        <Text style={styles.subtitle}>Open the gatepass qr</Text>
+
+        <TouchableOpacity 
+          style={[styles.button,!isQR&&({backgroundColor:'#ccc'})]}
+          disabled={!isQR}
+          onPress={
+            ()=>{
+              navigation.navigate('QRScannerScreen',{token})
+            }
+          }
+        >
           <Text style={styles.buttonText}>Proceed</Text>
         </TouchableOpacity>
       </View>
