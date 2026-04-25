@@ -6,6 +6,7 @@ import { styles } from '../stylesheets/roleSelect_styles.js';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store'; // Device's local storage.
 import {jwtDecode} from 'jwt-decode'
+import handleStudentDashboard from '../../apis/studentDashboardApi.js';
 
 export default function RoleSelectScreen({navigation}) {
   const [role,setRole]=useState(null);
@@ -43,7 +44,8 @@ export default function RoleSelectScreen({navigation}) {
                 const current_time=Date.now()/1000 // jwt stores creation time and expiry time in seconds.
                 if(current_time<decodedToken.exp){
                   if(role=='student'){
-                    navigation.navigate('StudentDashboardScreen',{token})
+                    const res=await handleStudentDashboard(token,'checkPass','get')
+                    navigation.navigate('StudentDashboardScreen',{token,hasPass:res.hasPass})
                   }
                   else if(role=='admin'){
                     // navigate to the admin dashboard.

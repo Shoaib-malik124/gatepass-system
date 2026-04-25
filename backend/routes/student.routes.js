@@ -2,7 +2,6 @@ import express from 'express'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import pool from '../config/pool.js'
 import 'dotenv/config'
-import { generateQr } from '../utils/generateQR.js'
 
 const studentRouter=express.Router()
 
@@ -65,14 +64,41 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                         "INSERT INTO pass (enrollment,expiry_time) values($1,$2) RETURNING id",
                         [enrollment,expiry]
                     );
-                    const qr=generateQr(enrollment)
-                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment,qr:qr})
+                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment})
                 }
             }
         }
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
+})
+
+studentRouter.get('/checkPass',authMiddleware,async(req,res)=>{
+   try {
+    const enrollment=req.user
+    const result = await pool.query(
+      `SELECT * FROM pass
+       WHERE enrollment = $1
+       AND processed = false
+       AND expiry_time > NOW()`,
+      [enrollment]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({
+        success:true,
+        hasPass:true
+      })
+    } else {
+      return res.json({
+        success:true,
+        hasPass:false
+      })
+    }
+  } catch (error) {
+    console.log(error.message);
+    return res.json({ success:false,hasPass: false });
+  }
 })
 
 studentRouter.post('/payFine',authMiddleware,async(req,res)=>{

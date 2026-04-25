@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import { branches, perBranchRoll } from '../constants/constant.js'
 import { sendOtpEmail } from '../utils/emailSender.js'
 import { getRedis }  from '../config/redisConnect.js'
+import { checkPass } from '../utils/checkPass.js'
 
 const authRouter=express.Router()
 
@@ -140,7 +141,8 @@ authRouter.post('/login',async(req,res)=>{
                     const hashedPassword=result.rows[0].password
                     if(await bcrypt.compare(password,hashedPassword)){
                         const token=await generateToken(enrollment)
-                        return res.json({success:true,message:`Login successful`,token:token})
+                        const response=await checkPass(enrollment)
+                        return res.json({success:true,message:`Login successful`,token:token,hashPass:response.hasPass})
                     }
                     else{
                         return res.json({success:false,message:'Password is not matching'})

@@ -50,7 +50,7 @@ export default function StudentLoginSignup({navigation,route}){
 
                               const token=res.token
                               await SecureStore.setItemAsync(`token`,token);
-                              navigation.navigate('StudentDashboardScreen',{token})
+                              navigation.navigate('StudentDashboardScreen',{token,hasPass:res.hasPass})
                             }
                             else{
                               console.log(res.message)
