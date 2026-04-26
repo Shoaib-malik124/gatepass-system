@@ -8,6 +8,7 @@ import { useState } from 'react';
 
 export default function StudentDashboard({ navigation,route }) {
   const { token,hasPass } = route.params || {};
+  const { gatepass,setGatepass } = useState('')
 
   return (
     <LinearGradient
@@ -21,7 +22,7 @@ export default function StudentDashboard({ navigation,route }) {
         disabled={!hasPass}
         onPress={
           ()=>{
-            navigation.navigate('QRScannerScreen',{token})
+            navigation.navigate('QRScannerScreen',{gatepass})
           }
         }
         >
@@ -96,6 +97,7 @@ export default function StudentDashboard({ navigation,route }) {
               const res=await handleStudentDashboard(token,'requestPass','post');
               if(res.success==true){
                 setIsQR(true)
+                setGatepass(res.token)
               }
               console.log(res.message);
             }

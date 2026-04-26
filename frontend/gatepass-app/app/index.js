@@ -13,6 +13,8 @@ import SetRules from './tabs/rulesSet.js'
 import SecurityAdd from './tabs/securityAdd.js'
 import SecurityRemove from './tabs/securityRemove.js'
 import QRScanner from './tabs/qrScanner.js'
+import DecisionDashboard from './tabs/decisionDashboard.js'
+import SecurityDashboard from './tabs/securityDashboard.js'
 
 
 const Stack=createNativeStackNavigator()
@@ -89,6 +91,18 @@ export default function App(){
           <Stack.Screen
             name='QRScannerScreen'
             component={QRScanner}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='SecurityDashboardScreen'
+            component={SecurityDashboard}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='DecisionDashboardScreen'
+            component={DecisionDashboard}
             options={{ headerShown: false }}
           />
 

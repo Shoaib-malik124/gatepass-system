@@ -3,10 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/securityDashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
-import handleSecurityDashboard from '../../apis/securityDashboardApi.js';
+// import handleSecurityDashboard from '../../apis/securityDashboardApi.js';
+import { useState } from 'react';
+import { Picker } from '@react-native-picker/picker'; // Added import
 
-export default function SecirityDashboard({ navigation, route }) {
+export default function SecurityDashboard({ navigation, route }) {
   const { token } = route.params || {};
+  const [session, setSession] = useState(null);
 
   return (
     <LinearGradient
@@ -28,34 +31,55 @@ export default function SecirityDashboard({ navigation, route }) {
         >
           <Text style={styles.topButtonText}>Logout</Text>
         </TouchableOpacity>
-
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-        {/* Set Rules */}
+        {/* Unified Scanner Control Card */}
         <View style={styles.card}>
           <View style={styles.iconContainer}>
-            <Ionicons name="document-text-outline" size={28} color="#4facfe" />
+            <Ionicons name="qr-code-outline" size={28} color="#4facfe" />
           </View>
 
-          <Text style={styles.title}>Scan QR</Text>
+          <Text style={styles.title}>Gatepass Scanner</Text>
+          
+          {/* Dropdown Section */}
+          <Text style={styles.label}>Select Session Type:</Text>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={session}
+              onValueChange={(itemValue) => setSession(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="-- Select Entry or Exit --" value={null} color="#888" />
+              <Picker.Item label="Scan OUT (Exit)" value="scanOut" />
+              <Picker.Item label="Scan IN (Entry)" value="scanIn" />
+            </Picker>
+          </View>
 
+          {/* Helper Text */}
+          <Text style={styles.helperText}>
+            {session === null 
+              ? 'Please select a session type to unlock the scanner.' 
+              : `Ready to scan student ${session === 'scanOut' ? 'EXIT' : 'ENTRY'}.`}
+          </Text>
+
+          {/* Scan Button */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={
-              ()=>{
-                // Take camera access/similar method.
-                // That camera when scans the qr, a screen should appear that gives the options to accept/reject token.
-              }
-            }
+            // Fixed conditional styling syntax using array [...]
+            style={[styles.button, session === null && styles.buttonDisabled]}
+            disabled={session === null}
+            onPress={() => {
+              // Open Camera logic here
+              // You can pass the 'session' state to the next step so the backend knows the intent
+              console.log(`Opening camera for ${session}...`);
+            }}
           >
-            <Text style={styles.buttonText}>Open</Text>
+            <Text style={styles.buttonText}>Open Scanner</Text>
           </TouchableOpacity>
         </View>
 
       </ScrollView>
-
     </LinearGradient>
   );
 }

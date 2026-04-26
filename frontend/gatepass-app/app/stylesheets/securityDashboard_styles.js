@@ -63,15 +63,49 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#333',
-    marginBottom: 10,
+    marginBottom: 15,
   },
+
+  // --- NEW STYLES FOR DROPDOWN ---
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#555',
+    marginBottom: 8,
+  },
+
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 12,
+    backgroundColor: '#fafafa',
+    marginBottom: 10,
+    overflow: 'hidden', // Ensures picker corners don't overlap border on iOS
+  },
+
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+
+  helperText: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 20,
+    fontStyle: 'italic',
+  },
+  // --------------------------------
 
   button: {
     backgroundColor: '#4facfe',
-    paddingVertical: 12,
+    paddingVertical: 14, // Slightly taller for better touch target
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 10,
+  },
+
+  // --- NEW STYLE FOR DISABLED STATE ---
+  buttonDisabled: {
+    backgroundColor: '#cccccc', 
   },
 
   buttonText: {

@@ -50,7 +50,8 @@ export default function AdminSecurityLogin({navigation,route}){
                             const token=res.token
                             await SecureStore.setItemAsync(`token`,token);
                             //navigate to admin/security dashboard.
-                            navigation.navigate('AdminDashboardScreen',{token});
+                            if(role=='admin')navigation.navigate('AdminDashboardScreen',{token});
+                            else navigation.navigate('SecurityDashboardScreen',{token})
                         }
                         else{
                             //Show the reason i.e., res.message in the frontend.

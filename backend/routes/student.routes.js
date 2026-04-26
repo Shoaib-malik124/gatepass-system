@@ -2,6 +2,7 @@ import express from 'express'
 import { authMiddleware } from '../middleware/authMiddleware.js'
 import pool from '../config/pool.js'
 import 'dotenv/config'
+import jwt from 'jsonwebtoken'
 
 const studentRouter=express.Router()
 
@@ -37,7 +38,7 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
             const start=result.rows[0].min_time,end=result.rows[0].max_time
 
             if(curr_time<start||curr_time>=end){
-                return res.json({success:false,message:'Access denied,current time lesser than the minimum time'})
+                return res.json({success:false,message:'Access denied,current time not allowed for exit'})
             }
             
             else{
@@ -59,12 +60,23 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                         minutes,            
                         seconds 
                     );
-                    
+
                     const result=await pool.query(
                         "INSERT INTO pass (enrollment,expiry_time) values($1,$2) RETURNING id",
                         [enrollment,expiry]
                     );
-                    return res.json({success:true,message:'Pass granted',gatepassId:result.rows[0].id,enrollment:result.rows[0].enrollment})
+
+                    const tokenPayload={
+                        id:result.rows[0].id,
+                        enrollment:enrollment
+                    }
+
+                    const tokenExpiry=(expiry.getTime()-Date.now())/(1000*60*60)
+                    
+                    const secret=process.env.JWT_SECRET
+                    const token=await jwt.sign(tokenPayload,secret,{expiresIn:tokenExpiry})
+
+                    return res.json({success:true,message:'Pass granted',token:token})
                 }
             }
         }

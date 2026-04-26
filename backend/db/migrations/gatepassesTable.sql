@@ -4,5 +4,7 @@ CREATE TABLE pass(
    exit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    entry_time TIMESTAMP,
    expiry_time TIMESTAMP,
+   scanout BOOLEAN DEFAULT false,
+   scanin BOOlEAN DEFAULT false,
    processed BOOLEAN DEFAULT false
 );

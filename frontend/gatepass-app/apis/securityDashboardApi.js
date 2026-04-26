@@ -1,8 +1,8 @@
 import securityDashboardCaller from "../constants/securityDashboardCaller"
 
-export const handleSecurityDashboard=(session,signal,id,jwt_token)=>{
+export const handleSecurityDashboard=async(session=null,signal='',id='',jwt_token,route)=>{
     try {
-        const res=securityDashboardCaller.post('/scanGatePass',
+        const res=await securityDashboardCaller.post(`/${route}`,
             {
               session:session,
               signal:signal,
