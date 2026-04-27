@@ -15,6 +15,7 @@ import SecurityRemove from './tabs/securityRemove.js'
 import QRScanner from './tabs/qrScanner.js'
 import DecisionDashboard from './tabs/decisionDashboard.js'
 import SecurityDashboard from './tabs/securityDashboard.js'
+import CameraScanner from './tabs/camera.js'
 
 
 const Stack=createNativeStackNavigator()
@@ -103,6 +104,12 @@ export default function App(){
           <Stack.Screen
             name='DecisionDashboardScreen'
             component={DecisionDashboard}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name='CameraScannerScreen'
+            component={CameraScanner}
             options={{ headerShown: false }}
           />
 

@@ -70,9 +70,8 @@ export default function SecurityDashboard({ navigation, route }) {
             style={[styles.button, session === null && styles.buttonDisabled]}
             disabled={session === null}
             onPress={() => {
-              // Open Camera logic here
-              // You can pass the 'session' state to the next step so the backend knows the intent
               console.log(`Opening camera for ${session}...`);
+              navigation.navigate('CameraScannerScreen',{token,session:session})
             }}
           >
             <Text style={styles.buttonText}>Open Scanner</Text>
