@@ -53,7 +53,7 @@ export default function RoleSelectScreen({navigation}) {
                   }
                   else{
                     // navigate to the security dashboard.
-                    navigation.navigate('SecurityDashboard',{token})
+                    navigation.navigate('SecurityDashboardScreen',{token})
                   }
                 }
                 else{

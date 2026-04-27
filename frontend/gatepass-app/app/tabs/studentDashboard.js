@@ -18,7 +18,7 @@ export default function StudentDashboard({ navigation,route }) {
 
       {/* Top Left Button */}
       <View style={styles.topLeftContainer}>
-        <TouchableOpacity style={styles.topButton,!isQR&&({backgroundColor:'#ccc'})}
+        <TouchableOpacity style={styles.topButton,!hasPass&&({backgroundColor:'#ccc'})}
         disabled={!hasPass}
         onPress={
           ()=>{
