@@ -4,11 +4,29 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/student_dashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
 import handleStudentDashboard from '../../apis/studentDashboardApi.js';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 export default function StudentDashboard({ navigation,route }) {
-  const { token,hasPass } = route.params || {};
-  const { gatepass,setGatepass } = useState('')
+  const { token } = route.params || {};
+  const [ gatepass,setGatepass ] = useState('')
+  const [ hasPass,setHaspass ] = useState(false)
+
+  useEffect(() => {
+  const checkPass = async () => {
+    try {
+      const passResponse = await handleStudentDashboard(token, 'checkPass', 'get');
+
+      if (passResponse.success) {
+        setGatepass(passResponse.gatepass);
+        setHaspass(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  checkPass();
+}, []);
 
   return (
     <LinearGradient
@@ -18,7 +36,7 @@ export default function StudentDashboard({ navigation,route }) {
 
       {/* Top Left Button */}
       <View style={styles.topLeftContainer}>
-        <TouchableOpacity style={styles.topButton,!hasPass&&({backgroundColor:'#ccc'})}
+        <TouchableOpacity style={[styles.topButton,!hasPass&&{backgroundColor:'#ccc'}]}
         disabled={!hasPass}
         onPress={
           ()=>{
@@ -90,14 +108,14 @@ export default function StudentDashboard({ navigation,route }) {
         <Text style={styles.subtitle}>Apply for a new gate pass</Text>
 
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button,hasPass&&{backgroundColor:'#ccc'}]}
           disabled={hasPass}
           onPress={
             async () => {
               const res=await handleStudentDashboard(token,'requestPass','post');
               if(res.success==true){
-                setIsQR(true)
                 setGatepass(res.token)
+                setHaspass(true)
               }
               console.log(res.message);
             }

@@ -44,8 +44,8 @@ export default function RoleSelectScreen({navigation}) {
                 const current_time=Date.now()/1000 // jwt stores creation time and expiry time in seconds.
                 if(current_time<decodedToken.exp){
                   if(role=='student'){
-                    const res=await handleStudentDashboard(token,'checkPass','get')
-                    navigation.navigate('StudentDashboardScreen',{token,hasPass:res.hasPass})
+                    // const res=await handleStudentDashboard(token,'checkPass','get')
+                    navigation.navigate('StudentDashboardScreen',{token})
                   }
                   else if(role=='admin'){
                     // navigate to the admin dashboard.

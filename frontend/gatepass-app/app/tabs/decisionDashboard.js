@@ -33,10 +33,7 @@ export default function DecisionDashboard({route}){
                         console.log(res.message)
                       }
                       // navigate to the securityDashboard
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'SecurityDashboardScreen' }]
-                      });
+                      navigation.replace('SecurityDashboardScreen',{token});
                     }
                 }
             >
@@ -64,10 +61,7 @@ export default function DecisionDashboard({route}){
                         console.log(res.message)
                       }
                       // navigate to the securityDashboard
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'SecurityDashboardScreen' }]
-                      });
+                      navigation.replace('SecurityDashboardScreen',{token});
                     }
                 }
             >

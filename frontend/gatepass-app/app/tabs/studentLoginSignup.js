@@ -44,13 +44,13 @@ export default function StudentLoginSignup({navigation,route}){
                     disabled={!enrollment || !password}
                     onPress={async()=>{
                         if(session=='login'){
-                            const res=await handleStudentLogin(role,enrollment,password)
+                            // const res=await handleStudentLogin(role,enrollment,password)
                             if(res.success==true){
                               console.log(res.token)
 
                               const token=res.token
                               await SecureStore.setItemAsync(`token`,token);
-                              navigation.navigate('StudentDashboardScreen',{token,hasPass:res.hasPass})
+                              navigation.navigate('StudentDashboardScreen',{token})
                             }
                             else{
                               console.log(res.message)
