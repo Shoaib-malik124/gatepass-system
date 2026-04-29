@@ -44,7 +44,7 @@ export default function StudentLoginSignup({navigation,route}){
                     disabled={!enrollment || !password}
                     onPress={async()=>{
                         if(session=='login'){
-                            // const res=await handleStudentLogin(role,enrollment,password)
+                            const res=await handleStudentLogin(role,enrollment,password)
                             if(res.success==true){
                               console.log(res.token)
 

@@ -5,28 +5,34 @@ import { styles } from '../stylesheets/student_dashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
 import handleStudentDashboard from '../../apis/studentDashboardApi.js';
 import { useState,useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function StudentDashboard({ navigation,route }) {
   const { token } = route.params || {};
   const [ gatepass,setGatepass ] = useState('')
   const [ hasPass,setHaspass ] = useState(false)
 
-  useEffect(() => {
-  const checkPass = async () => {
-    try {
-      const passResponse = await handleStudentDashboard(token, 'checkPass', 'get');
+  useFocusEffect(// runs on every navigation.
+    useCallback(
+      ()=>{
+        const checkPass = async () => {
+          try {
+            const passResponse = await handleStudentDashboard(token, 'checkPass', 'get');
 
-      if (passResponse.success) {
-        setGatepass(passResponse.gatepass);
-        setHaspass(true);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+            if (passResponse.success) {
+              setGatepass(passResponse.gatepass);
+              setHaspass(true);
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        };
 
-  checkPass();
-}, []);
+        checkPass()
+      },[token] // For each login session,recreate and memorize this method.Otherwise, token will one and final for all users.
+    )
+  );
 
   return (
     <LinearGradient
