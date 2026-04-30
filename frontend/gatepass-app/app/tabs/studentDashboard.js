@@ -20,7 +20,7 @@ export default function StudentDashboard({ navigation,route }) {
           try {
             const passResponse = await handleStudentDashboard(token, 'checkPass', 'get');
 
-            if (passResponse.success) {
+            if (passResponse.success==true) {
               setGatepass(passResponse.gatepass);
               setHaspass(true);
             }

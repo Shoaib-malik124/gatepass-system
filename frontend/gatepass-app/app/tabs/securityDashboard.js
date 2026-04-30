@@ -52,8 +52,8 @@ export default function SecurityDashboard({ navigation, route }) {
               style={styles.picker}
             >
               <Picker.Item label="-- Select Entry or Exit --" value={null} color="#888" />
-              <Picker.Item label="Scan OUT (Exit)" value="scanOut" />
-              <Picker.Item label="Scan IN (Entry)" value="scanIn" />
+              <Picker.Item label="Scan OUT (Exit)" value="exit" />
+              <Picker.Item label="Scan IN (Entry)" value="entry" />
             </Picker>
           </View>
 
@@ -61,7 +61,7 @@ export default function SecurityDashboard({ navigation, route }) {
           <Text style={styles.helperText}>
             {session === null 
               ? 'Please select a session type to unlock the scanner.' 
-              : `Ready to scan student ${session === 'scanOut' ? 'EXIT' : 'ENTRY'}.`}
+              : `Ready to scan student ${session === 'exit' ? 'EXIT' : 'ENTRY'}.`}
           </Text>
 
           {/* Scan Button */}
@@ -71,7 +71,7 @@ export default function SecurityDashboard({ navigation, route }) {
             disabled={session === null}
             onPress={() => {
               console.log(`Opening camera for ${session}...`);
-              navigation.navigate('CameraScannerScreen',{token,session:session})
+              navigation.navigate('CameraScannerScreen',{token:token,session:session})
             }}
           >
             <Text style={styles.buttonText}>Open Scanner</Text>

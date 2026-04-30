@@ -1,6 +1,6 @@
-import securityDashboardCaller from "../constants/securityDashboardCaller"
+import securityDashboardCaller from "../constants/securityDashboardCaller.js"
 
-export const handleSecurityDashboard=async(session=null,signal='',id='',jwt_token,route,gatepassToken=null)=>{
+export const handleSecurityDashboard=async({session=null,signal='',id='',jwt_token,route,gatepassToken=null})=>{
     if(gatepassToken){
         try {
             const res=await securityDashboardCaller.post(`/${route}`,

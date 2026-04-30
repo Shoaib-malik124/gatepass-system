@@ -9,6 +9,8 @@ import securityRouter from './routes/security.routes.js';
 import studentRouter from './routes/student.routes.js';
 import { limit } from './middleware/limit.js';
 
+// import "./cron/fine_job.js"
+
 ;(
     async()=>{
         try {

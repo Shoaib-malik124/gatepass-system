@@ -22,10 +22,13 @@ studentRouter.get('/delete',authMiddleware,async(req,res)=>{
 studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
     try {
         const enrollment=req.user
-        const passResponse=await pool.query(
-          "SELECT * FROM pass WHERE enrollment=$1 AND processed=$2",
-          [enrollment,false]
-        )
+        const passResponse = await pool.query(
+            `SELECT * FROM pass
+            WHERE enrollment = $1
+            AND processed = false
+            AND expiry_time > NOW()`,
+            [enrollment]
+        );
 
         if(passResponse.rows.length===0){
             const permissionResult=await pool.query(
@@ -116,9 +119,19 @@ studentRouter.get('/checkPass',authMiddleware,async(req,res)=>{
     );
 
     if (result.rows.length > 0) {
+      const tokenPayload={
+        id:result.rows[0].id,
+        enrollment:enrollment
+      }
+
+      const tokenExpiry=(result.rows[0].expiry_time.getTime()-Date.now())
+      const secret=process.env.JWT_SECRET
+
+      const token=jwt.sign(tokenPayload,secret,{expiresIn:tokenExpiry})
+
       return res.json({
         success:true,
-        gatepass:result.rows[0].token
+        gatepass:token
       })
     } else {
       return res.json({

@@ -31,11 +31,11 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                 return res.json({success:false,message:'Gatepass Denied'})
             }
             else{
-                const result=pool.query(
-                    "SELECT scanout FROM pass WHERE id = $1",
+                const result=await pool.query(
+                    "SELECT * FROM pass WHERE id = $1",
                     [id]
                 )
-                if(result==true){
+                if(result.rows[0].scanout==true){
                     return res.json({success:false,message:'Gatepass already scannedout'})
                 }
                 else{
@@ -49,22 +49,22 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
         }
         else{
             if(signal=='accept'){
-                const result=pool.query(
-                    "SELECT scanin FROM pass WHERE id = $1",
+                const result=await pool.query(
+                    "SELECT * FROM pass WHERE id = $1",
                     [id]
                 )
-                if(result==true){
+                if(result.rows[0].scanin==true){
                     return res.json({success:false,message:'Gatepass already scannedin'})
                 }
                 else{
                     await pool.query(
                         `UPDATE pass
-                        SET entry_time = CURRENT_TIMESTAMP
+                        SET entry_time = CURRENT_TIMESTAMP,
                         scanin=$2
                         WHERE id = $1`,
                         [id,true]
                     );
-                    return res.json({success:false,message:'Gatepass Accepted'})
+                    return res.json({success:true,message:'Gatepass Accepted'})
                 }
             }
             else{
