@@ -1,14 +1,45 @@
-import { View,Text,TextInput,Image,TouchableOpacity } from 'react-native'
-import { useState } from 'react'
+import { View,Text,TextInput,Image,TouchableOpacity,Alert,ActivityIndicator } from 'react-native'
+import { useState,useRef,useEffect } from 'react'
 import { styles } from '../stylesheets/studentVerifyOtp_styles.js'
 import handleStudentOtpVerify from '../../apis/studentOtpVerifyApi.js'
 
 export default function StudentVerifyOtp({navigation,route}){
     const [otp,setOtp]=useState('')
     const {email}=route.params || {}
+    const [loading,setLoading]=useState(false)
+
+    const isMounted = useRef(false)
+
+    useEffect(() => {
+        isMounted.current = true
+        return () => {
+            isMounted.current = false
+        }
+    }, [])
+
+    const handlePress=async()=>{
+      if (isMounted.current)setLoading(true)
+      try {
+        const res=await handleStudentOtpVerify(otp,email)
+        if (isMounted.current)setLoading(false)
+
+        if(res.success==true){
+          Alert.alert("Success",`${res.message}`)
+          navigation.replace('StudentLoginSignupScreen',{session:'signup',role:"",email})
+        }
+        else{
+          Alert.alert("Error",`${res.message}`)
+        }
+      } catch (error) {
+        if (isMounted.current)setLoading(false)
+        Alert.alert("Error","someting went wrong")
+      }
+    }
+
     return(
        <View style={styles.container}>
          <View style={styles.card}>
+            
             <Image
               source={require('../../assets/icon.png')}
               style={styles.logo}
@@ -28,21 +59,16 @@ export default function StudentVerifyOtp({navigation,route}){
             />
 
             <TouchableOpacity
-                style={[styles.button,!otp && {backgroundColor:'#ccc'}]}
-                disabled={!otp}
-                onPress={async()=>{
-                  const res=await handleStudentOtpVerify(otp,email)
-                  if(res.success==true){
-                    console.log(res.message)
-                    navigation.navigate('StudentLoginSignupScreen',{session:'signup',role:"",email})
-                  }
-                  else{
-                    console.log(res.message)
-                  }
-                  
-                }}
+                style={[styles.button,(!otp||loading) && {backgroundColor:'#ccc'}]}
+                disabled={!otp || loading}
+                onPress={handlePress}
             >
-                <Text style={styles.buttonText}>Proceed</Text>
+                {/* 🔥 Loader Overlay */}
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Proceed</Text>
+                )}
             </TouchableOpacity>
 
          </View>

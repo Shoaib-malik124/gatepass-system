@@ -1,17 +1,19 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity,Alert,ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/student_dashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
 import handleStudentDashboard from '../../apis/studentDashboardApi.js';
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useRef,useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 export default function StudentDashboard({ navigation,route }) {
   const { token } = route.params || {};
   const [ gatepass,setGatepass ] = useState('')
   const [ hasPass,setHaspass ] = useState(false)
+
+  const [loading,setLoading]=useState(false)
+  const isMounted = useRef(false)
 
   useFocusEffect(// runs on every navigation.
     useCallback(
@@ -33,6 +35,32 @@ export default function StudentDashboard({ navigation,route }) {
       },[token] // For each login session,recreate and memorize this method.Otherwise, token will one and final for all users.
     )
   );
+
+  useEffect(() => {
+      isMounted.current = true
+      return () => {
+          isMounted.current = false
+      }
+  }, [])
+
+  const handleApplyPress=async()=>{
+    if(isMounted.current)setLoading(true)
+    try {
+      const res=await handleStudentDashboard(token,'requestPass','post');
+      if(isMounted.current)setLoading(false)
+
+      if(res.success==true){
+        setGatepass(res.token)
+        setHaspass(true)
+        Alert.alert("Success",`${res.message}`)
+      }
+      else{
+        Alert.alert("Success",`${res.message}`)
+      }
+    } catch (error) {
+        Alert.alert("Something went wrong")
+    }
+  }
 
   return (
     <LinearGradient
@@ -116,16 +144,7 @@ export default function StudentDashboard({ navigation,route }) {
         <TouchableOpacity
           style={[styles.button,hasPass&&{backgroundColor:'#ccc'}]}
           disabled={hasPass}
-          onPress={
-            async () => {
-              const res=await handleStudentDashboard(token,'requestPass','post');
-              if(res.success==true){
-                setGatepass(res.token)
-                setHaspass(true)
-              }
-              console.log(res.message);
-            }
-          }
+          onPress={handleApplyPress}
         >
           <Text style={styles.buttonText}>Apply</Text>
         </TouchableOpacity>
