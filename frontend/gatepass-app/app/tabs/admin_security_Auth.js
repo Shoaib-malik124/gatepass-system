@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { View,Image,Text,TouchableOpacity, TextInput } from "react-native"
+import { useState,useEffect,useRef } from "react"
+import { View,Image,Text,TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native"
 import { styles } from "../stylesheets/admin_security_auth_styles.js";
 import handleAdminSecurityLogin from "../../apis/adminSecurityLoginApi.js";
 import * as SecureStore from 'expo-secure-store';
@@ -9,6 +9,42 @@ export default function AdminSecurityLogin({navigation,route}){
     const {role}=route.params || {};
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
+
+    const [loading,setLoading]=useState(false)
+    const isMounted=useRef(false)
+
+    useEffect(
+      ()=>{
+        isMounted.current=true
+        return ()=>{
+            isMounted.current=false
+        }
+      },[]
+    )
+
+    const handlePress=async()=>{
+        if(isMounted.current)setLoading(true)
+        try {
+            const res=await handleAdminSecurityLogin(role,email,password)
+            if(isMounted.current)setLoading(false)
+
+            if(res.success){
+                //Get the token from res,store in local and navigate to the admin/security dashboard.
+                const token=res.token
+                await SecureStore.setItemAsync(`token`,token);
+                //navigate to admin/security dashboard.
+                Alert.alert("Login successful")
+                if(role=='admin')navigation.replace('AdminDashboardScreen',{token});
+                else navigation.replace('SecurityDashboardScreen',{token})
+            }
+            else{
+                Alert.alert(`${res.message}`)
+            }
+        } catch (error) {
+            if(isMounted.current)setLoading(false)
+            Alert.alert('Something went wrong')
+        }
+    }
 
     return(
        <View style={styles.container}>
@@ -40,26 +76,15 @@ export default function AdminSecurityLogin({navigation,route}){
                />
                
                <TouchableOpacity
-                    style={[styles.button,(!email || !password)&&{backgroundColor:'#ccc'}]}
-                    disabled={!email || !password}
-                    onPress={async()=>{
-                        //axios request to backend
-                        const res=await handleAdminSecurityLogin(role,email,password)
-                        if(res.success==true){
-                            //Get the token from res,store in local and navigate to the admin/security dashboard.
-                            const token=res.token
-                            await SecureStore.setItemAsync(`token`,token);
-                            //navigate to admin/security dashboard.
-                            if(role=='admin')navigation.navigate('AdminDashboardScreen',{token});
-                            else navigation.navigate('SecurityDashboardScreen',{token})
-                        }
-                        else{
-                            //Show the reason i.e., res.message in the frontend.
-                            console.log(res.message)
-                        }
-                    }}
+                    style={[styles.button,(!email || !password || loading)&&{backgroundColor:'#ccc'}]}
+                    disabled={!email || !password || loading}
+                    onPress={handlePress}
                >
-                <Text style={styles.buttonText}>Login</Text>
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Login</Text>
+                )}
                </TouchableOpacity>
            </View>
        </View>

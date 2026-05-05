@@ -69,17 +69,4 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
     marginTop: 10,
   },
-
-  loaderOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    borderRadius: 12, // matches card shape
-  },
-  
 });

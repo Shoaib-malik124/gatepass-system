@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View,Text,TextInput,TouchableOpacity,Image } from "react-native";
+import { useState,useEffect,useRef } from "react";
+import { View,Text,TextInput,TouchableOpacity,Image,Alert,ActivityIndicator } from "react-native";
 import handleAdminDashboardSecurity from "../../apis/adminDashboardSecurityApi";
 import { styles } from "../stylesheets/addSecurity_styles.js";
 
@@ -7,6 +7,29 @@ export default function SecurityAdd({route}){
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
     const {token}=route.params || {}
+    const [loading,setLoading]=useState(false)
+    const isMounted=useRef(false)
+
+    useEffect(
+        ()=>{
+          isMounted.current=true
+          return ()=>{
+            isMounted.current=false
+          }
+        },[]
+    )
+
+    const handlePress=async()=>{
+        if(isMounted.current)setLoading(true)
+        try {
+            const res=await handleAdminDashboardSecurity(token,'addSecurity',email,password)
+            if(isMounted.current)setLoading(false)
+            Alert.alert(res.message)
+        } catch (error) {
+            if(isMounted.current)setLoading(false)
+            Alert.alert('Something went wrong')
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -37,21 +60,15 @@ export default function SecurityAdd({route}){
                 />
 
                 <TouchableOpacity
-                   style={[styles.button,(!email || !password)&&{backgroundColor:'#ccc'}]}
-                   disabled={(!email)||(!password)}
-                   onPress={
-                     async()=>{
-                        const res=await handleAdminDashboardSecurity(token,'addSecurity','post',email,password)
-                        if(res.success==true){
-                            console.log(res.message)
-                        }
-                        else{
-                            console.log(res.message)
-                        }
-                     }
-                   }
+                   style={[styles.button,(!email || !password || loading)&&{backgroundColor:'#ccc'}]}
+                   disabled={(!email)||(!password)||loading}
+                   onPress={handlePress}
                 >
-                    <Text style={styles.buttonText}>Add Account</Text>
+                    {loading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.buttonText}>Add account</Text>
+                    )}
                 </TouchableOpacity>
 
             </View>

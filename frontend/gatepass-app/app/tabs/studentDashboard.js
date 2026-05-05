@@ -58,7 +58,8 @@ export default function StudentDashboard({ navigation,route }) {
         Alert.alert("Success",`${res.message}`)
       }
     } catch (error) {
-        Alert.alert("Something went wrong")
+      if(isMounted.current)setLoading(false)
+      Alert.alert("Something went wrong")
     }
   }
 
@@ -142,11 +143,15 @@ export default function StudentDashboard({ navigation,route }) {
         <Text style={styles.subtitle}>Apply for a new gate pass</Text>
 
         <TouchableOpacity
-          style={[styles.button,hasPass&&{backgroundColor:'#ccc'}]}
-          disabled={hasPass}
+          style={[styles.button,(hasPass||loading)&&{backgroundColor:'#ccc'}]}
+          disabled={hasPass || loading}
           onPress={handleApplyPress}
         >
-          <Text style={styles.buttonText}>Apply</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Apply</Text>
+          )}
         </TouchableOpacity>
       </View>
 

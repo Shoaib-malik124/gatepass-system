@@ -1,6 +1,6 @@
 import adminDashboardCaller from "../constants/adminDashboardCaller.js";
 
-const handleAdminDashboardSecurity=async(jwt_token,route,request,email,password)=>{
+const handleAdminDashboardSecurity=async(jwt_token,route,email,password)=>{
     try {
         const res=await adminDashboardCaller.post(`/${route}`,
             {
