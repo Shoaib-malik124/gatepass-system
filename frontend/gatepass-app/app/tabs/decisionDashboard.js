@@ -1,12 +1,47 @@
 import React from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Alert } from "react-native";
 import { styles } from "../stylesheets/decisionDashboard_styles.js";
 import { handleSecurityDashboard } from "../../apis/securityDashboardApi.js";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import { useState,useEffect,useRef } from "react";
 
 export default function DecisionDashboard({ route, navigation }) {
   const { session, token, enrollment, id } = route.params || {};
+  const [loading,setLoading]=useState(false)
+  const isMounted=useRef(false)
+
+  useEffect(
+    ()=>{
+      isMounted.current=true
+      return ()=>{
+        isMounted.current=false
+      }
+    }
+  )
+
+  const handlePress=async(signal)=>{
+    if(isMounted.current)setLoading(true)
+    try {
+      const res = await handleSecurityDashboard({
+        session:session,
+        signal:signal, 
+        id:id,
+        jwt_token:token,
+        route:'scanGatePass'
+      });
+
+      if(isMounted.current)setLoading(false)
+
+      Alert.alert(res.message);
+      navigation.replace('SecurityDashboardScreen', { token });
+
+    } catch (error) {
+      if(isMounted.current)setLoading(false)
+      Alert.alert("Something went wrong")
+      navigation.replace('SecurityDashboardScreen', { token });
+    }
+  }
 
   return (
     <LinearGradient
@@ -34,27 +69,15 @@ export default function DecisionDashboard({ route, navigation }) {
           </Text>
 
           <TouchableOpacity
-            style={styles.button}
-            onPress={async () => {
-              const res = await handleSecurityDashboard({
-                session:session,
-                signal:'accept', 
-                id:id,
-                jwt_token:token,
-                route:'scanGatePass'
-              });
-
-              if (res.success == true) {
-                console.log(`Gatepass approved for ${session}`);
-              } else {
-                console.log("hello")
-                console.log(res.message);
-              }
-
-              navigation.replace('SecurityDashboardScreen', { token });
-            }}
+            style={[styles.button,loading&&({backgroundColor:'#ccc'})]}
+            disabled={loading}
+            onPress={()=>handlePress('accept')}
           >
-            <Text style={styles.buttonText}>Approve</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Approve</Text>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -72,27 +95,15 @@ export default function DecisionDashboard({ route, navigation }) {
           </Text>
 
           <TouchableOpacity
-            style={[styles.button, styles.declineButton]}
-            onPress={async () => {
-              const res = await handleSecurityDashboard({
-                session:session,
-                signal:'reject', 
-                id:id,
-                jwt_token:token,
-                route:'scanGatePass'
-              });
-
-              if (res.success == true) {
-                console.log(`Gatepass rejected for ${session}`);
-              } else {
-                console.log("hello")
-                console.log(res.message);
-              }
-
-              navigation.replace('SecurityDashboardScreen', { token });
-            }}
+            style={[styles.button, styles.declineButton,loading&&({backgroundColor:'#ccc'})]}
+            disabled={loading}
+            onPress={()=>handlePress('reject')}
           >
-            <Text style={styles.buttonText}>Decline</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Decline</Text>
+            )}
           </TouchableOpacity>
         </View>
 

@@ -61,7 +61,7 @@ export default function SecurityDashboard({ navigation, route }) {
           <Text style={styles.helperText}>
             {session === null 
               ? 'Please select a session type to unlock the scanner.' 
-              : `Ready to scan student ${session === 'exit' ? 'EXIT' : 'ENTRY'}.`}
+              : `Ready to scan for student ${session === 'exit' ? 'EXIT' : 'ENTRY'}.`}
           </Text>
 
           {/* Scan Button */}

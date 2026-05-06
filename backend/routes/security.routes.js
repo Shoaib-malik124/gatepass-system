@@ -28,7 +28,7 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     "DELETE FROM pass WHERE id = $1",
                     [id]
                 );
-                return res.json({success:false,message:'Gatepass Denied'})
+                return res.json({success:false,message:'Gatepass rejected for exit'})
             }
             else{
                 const result=await pool.query(
@@ -36,14 +36,14 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     [id]
                 )
                 if(result.rows[0].scanout==true){
-                    return res.json({success:false,message:'Gatepass already scannedout'})
+                    return res.json({success:false,message:'Gatepass already scanned for exit'})
                 }
                 else{
                     await pool.query(
                         "UPDATE pass SET exit_time=CURRENT_TIMESTAMP,scanout=$2 WHERE id=$1",
                         [id,true]
                     );
-                    return res.json({success:true,message:'Gatepass Granted'})
+                    return res.json({success:true,message:'Gatepass scan successful for exit'})
                 }
             }
         }
@@ -54,7 +54,7 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     [id]
                 )
                 if(result.rows[0].scanin==true){
-                    return res.json({success:false,message:'Gatepass already scannedin'})
+                    return res.json({success:false,message:'Gatepass already scanned for entry'})
                 }
                 else{
                     await pool.query(
@@ -64,7 +64,7 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                         WHERE id = $1`,
                         [id,true]
                     );
-                    return res.json({success:true,message:'Gatepass Accepted'})
+                    return res.json({success:true,message:'Gatepass scan successful for entry'})
                 }
             }
             else{
@@ -72,7 +72,7 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     "DELETE FROM pass WHERE id = $1",
                     [id]
                 );
-                return res.json({success:true,message:'Gatepass Rejected'})
+                return res.json({success:true,message:'Gatepass rejected for entry'})
             }
         }
     } catch (error) {
