@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { useState,useEffect,useRef } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Picker } from "@react-native-picker/picker";
 import { styles } from "../stylesheets/setRules_styles.js";
@@ -10,8 +10,31 @@ export default function SetRules({ navigation, route }) {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [fine, setFine] = useState("");
+  const [loading,setLoading]=useState(false)
+  const isMounted=useRef(false)
 
   const { token } = route.params || {};
+
+  useEffect(
+    ()=>{
+      isMounted.current=true
+      return ()=>{
+        isMounted.current=false
+      }
+    },[]
+  )
+
+  const handlePress=async()=>{
+    if(isMounted.current)setLoading(true)
+    try {
+      const res=await handleRulesSet(token,permission,start,end,fine)
+      if(isMounted.current)setLoading(false)
+      Alert.alert(res.message)
+    } catch (error) {
+      if(isMounted.current)setLoading(false)
+      Alert.alert("Something went wrong")
+    }
+  }
 
   return (
     <LinearGradient
@@ -65,23 +88,17 @@ export default function SetRules({ navigation, route }) {
         {/* Button */}
         <TouchableOpacity
           style={[
-            styles.button,(!start)&&(!end)&&(!fine)&&({backgroundColor:'#ccc'})
+            styles.button,(loading)&&({backgroundColor:'#ccc'})
           ]}
-          disabled={(!start)&&(!end)&&(!fine)}
+          disabled={loading}
           
-          onPress={
-            async() => {
-              const res=await handleRulesSet(token,permission,start,end,fine)
-              if(res.success==true){
-                console.log(res.message)
-              }
-              else{
-                console.log(res.message)
-              }
-            }
-          }
+          onPress={handlePress}
         >
-          <Text style={styles.buttonText}>Apply Rules</Text>
+          {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Apply Rules</Text>
+            )}
         </TouchableOpacity>
 
       </View>
