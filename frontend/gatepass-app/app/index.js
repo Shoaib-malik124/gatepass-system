@@ -17,7 +17,6 @@ import DecisionDashboard from './tabs/decisionDashboard.js'
 import SecurityDashboard from './tabs/securityDashboard.js'
 import CameraScanner from './tabs/camera.js'
 
-
 const Stack=createNativeStackNavigator()
 
 export default function App(){
