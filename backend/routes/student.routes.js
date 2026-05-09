@@ -56,7 +56,7 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                 const startSec=sh*60*60+sm*60+ss,endSec=eh*60*60+em*60+es,currSec=ch*60*60+cm*60+cs
 
                 if(currSec<startSec || currSec>=endSec){
-                return res.json({success:false,message:'Access denied,current time not allowed for exit'})
+                   return res.json({success:false,message:'Access denied,current time not allowed for exit'})
                 }
 
                 else{

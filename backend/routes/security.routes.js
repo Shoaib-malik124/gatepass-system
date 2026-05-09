@@ -48,11 +48,13 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
             }
         }
         else{
+            const result=await pool.query(
+                "SELECT * FROM pass WHERE id = $1",
+                [id]
+            )
+            const enrollment=result.rows[0].enrollment
+
             if(signal=='accept'){
-                const result=await pool.query(
-                    "SELECT * FROM pass WHERE id = $1",
-                    [id]
-                )
                 if(result.rows[0].scanin==true){
                     return res.json({success:false,message:'Gatepass already scanned for entry'})
                 }
@@ -69,12 +71,29 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
             }
             else{
                 await pool.query(
-                    "DELETE FROM pass WHERE id = $1",
-                    [id]
-                );
+                    `UPDATE student
+                    SET fine=fine+ $1
+                    WHERE enrollment=$2`,
+                    [100,enrollment]
+                )
                 return res.json({success:true,message:'Gatepass rejected for entry'})
             }
         }
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+})
+
+securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{
+    try {
+        const enrollment=req.body.enrollment
+        await pool.query(
+            `UPDATE student
+            SET fine=fine+ $1
+            WHERE enrollment=$2`,
+            [100,enrollment]
+        )
+        return res.json({success:true,message:'Fine imposed successfully'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }

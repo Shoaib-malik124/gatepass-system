@@ -3,7 +3,7 @@ import pool from '../config/pool.js';
 import 'dotenv/config'
 
 cron.schedule("59 * * * *", async () => { // Check gatepasses every hour's last minute to impose fines.
-  try {
+  try {                                   // Change to a single check at 12 am,as late students may arrive till this time.
     await pool.query("BEGIN");
     const fine_amount=Number(process.env.FINE_AMOUNT)
     await pool.query(`
