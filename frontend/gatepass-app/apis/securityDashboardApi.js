@@ -44,3 +44,24 @@ export const handleSecurityDashboard=async({session=null,signal='',id='',jwt_tok
         }
     }
 }
+
+export const handleDecisionDashboard=async({enrollment,jwt_token,route})=>{
+    try {
+        const res=await securityDashboardCaller.post(`/${route}`,
+            {
+              enrollment:enrollment
+            },
+            {
+              headers:{
+                authorization:`Bearer ${jwt_token}`
+              }
+            }
+        )
+        return res.data
+    } catch (error) {
+        return {
+            success:false,
+            message:error.message
+        }
+    }
+}

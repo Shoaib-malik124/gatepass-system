@@ -5,14 +5,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // 🔥 centers everything nicely
   content: {
     flex: 1,
     justifyContent: "center",
     padding: 20,
   },
 
-  // HEADER TITLE
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -20,7 +18,6 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  // CARD
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 20,
@@ -35,7 +32,6 @@ export const styles = StyleSheet.create({
     elevation: 6,
   },
 
-  // ICON
   iconContainer: {
     width: 50,
     height: 50,
@@ -46,7 +42,6 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // CARD TITLE
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -54,14 +49,27 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-  // SUBTEXT
   subText: {
     fontSize: 14,
     color: "#666",
     marginBottom: 10,
   },
 
-  // BUTTON
+  // NEW INPUT STYLE
+  input: {
+    width: "100%",
+    backgroundColor: "#f8f9fa",
+    borderWidth: 1,
+    borderColor: "#dbe4ea",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: "#333",
+    marginTop: 12,
+    marginBottom: 10,
+  },
+
   button: {
     marginTop: 10,
     backgroundColor: "#4facfe",
@@ -70,7 +78,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // DECLINE BUTTON (red)
   declineButton: {
     backgroundColor: "#ff5c5c",
   },

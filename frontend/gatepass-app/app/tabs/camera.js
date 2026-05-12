@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import { handleSecurityDashboard } from '../../apis/securityDashboardApi.js';
 
 export default function CameraScanner({ navigation,route }) {
@@ -31,14 +31,20 @@ export default function CameraScanner({ navigation,route }) {
           gatepassToken:gatepassToken
         });
 
-        navigation.replace('DecisionDashboardScreen',
-          {
-            session:session,
-            token:token,
-            enrollment:res.enrollment,
-            id:res.id
-          }
-        )
+        if(res.success){
+          navigation.replace('DecisionDashboardScreen',
+            {
+              session:session,
+              token:token,
+              enrollment:res.enrollment,
+              id:res.id
+            }
+          )
+        }
+        else{
+          Alert.alert("Gatepass token expired")
+          navigation.replace('SecurityDashboardScreen',{token})
+        }
       } catch (error) {
         navigation.replace('SecurityDashboardScreen',{token})
       }

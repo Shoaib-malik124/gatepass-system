@@ -1,7 +1,7 @@
 import React from "react";
-import { View, TouchableOpacity, Text, Alert } from "react-native";
+import { View, TouchableOpacity, Text, Alert, TextInput } from "react-native";
 import { styles } from "../stylesheets/decisionDashboard_styles.js";
-import { handleSecurityDashboard } from "../../apis/securityDashboardApi.js";
+import { handleDecisionDashboard, handleSecurityDashboard } from "../../apis/securityDashboardApi.js";
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import { useState,useEffect,useRef } from "react";
@@ -9,6 +9,7 @@ import { useState,useEffect,useRef } from "react";
 export default function DecisionDashboard({ route, navigation }) {
   const { session, token, enrollment, id } = route.params || {};
   const [loading,setLoading]=useState(false)
+  const [newEnroll,setNewEnroll]=useState(null)
   const isMounted=useRef(false)
 
   useEffect(
@@ -20,7 +21,7 @@ export default function DecisionDashboard({ route, navigation }) {
     }
   )
 
-  const handlePress=async(signal)=>{
+  const handleAcceptRejectPress=async(signal)=>{
     if(isMounted.current)setLoading(true)
     try {
       const res = await handleSecurityDashboard({
@@ -34,12 +35,33 @@ export default function DecisionDashboard({ route, navigation }) {
       if(isMounted.current)setLoading(false)
 
       Alert.alert(res.message);
-      navigation.replace('SecurityDashboardScreen', { token });
+      if(res.success){
+        navigation.replace('SecurityDashboardScreen', { token });
+      }
 
     } catch (error) {
       if(isMounted.current)setLoading(false)
       Alert.alert("Something went wrong")
-      navigation.replace('SecurityDashboardScreen', { token });
+    }
+  }
+
+  const handleFinePress=async()=>{
+    if(isMounted.current)setLoading(true)
+    try {
+      const res = await handleDecisionDashboard({
+        enrollment:enrollment,
+        jwt_token:token,
+        route:'imposeFine'
+      });
+
+      if(isMounted.current)setLoading(false)
+      Alert.alert(res.message)
+      if(res.success){
+        navigation.replace('SecurityDashboardScreen', { token });
+      }
+    } catch (error) {
+      if(isMounted.current)setLoading(false)
+      Alert.alert("Something went wrong")
     }
   }
 
@@ -71,7 +93,7 @@ export default function DecisionDashboard({ route, navigation }) {
           <TouchableOpacity
             style={[styles.button,loading&&({backgroundColor:'#ccc'})]}
             disabled={loading}
-            onPress={()=>handlePress('accept')}
+            onPress={()=>handleAcceptRejectPress('accept')}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
@@ -97,12 +119,45 @@ export default function DecisionDashboard({ route, navigation }) {
           <TouchableOpacity
             style={[styles.button, styles.declineButton,loading&&({backgroundColor:'#ccc'})]}
             disabled={loading}
-            onPress={()=>handlePress('reject')}
+            onPress={()=>handleAcceptRejectPress('reject')}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.buttonText}>Decline</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Impose fine card */}
+        <View style={styles.card}>
+
+          <View style={styles.iconContainer}>
+            <Ionicons name="close-outline" size={28} color="#4facfe" />
+          </View>
+
+          <Text style={styles.cardTitle}>Impose Fine</Text>
+
+          <Text style={styles.subText}>
+            Impose fine on student
+          </Text>
+
+          <TextInput
+           style={styles.input}
+           placeholder="Enter your enrollment"
+           value={newEnroll}
+           onChange={setNewEnroll}
+          ></TextInput>
+
+          <TouchableOpacity
+            style={[styles.button, styles.declineButton,(loading || !newEnroll)&&({backgroundColor:'#ccc'})]}
+            disabled={loading || !newEnroll}
+            onPress={()=>handleFinePress()}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Impose Fine</Text>
             )}
           </TouchableOpacity>
         </View>
