@@ -40,8 +40,8 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                 }
                 else{
                     await pool.query(
-                        "UPDATE pass SET exit_time=CURRENT_TIMESTAMP,scanout=$2 WHERE id=$1",
-                        [id,true]
+                        "UPDATE pass SET exit_time=CURRENT_TIMESTAMP,scanout=TRUE WHERE id=$1",
+                        [id]
                     );
                     return res.json({success:true,message:'Gatepass scan successful for exit'})
                 }
@@ -62,21 +62,13 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     await pool.query(
                         `UPDATE pass
                         SET entry_time = CURRENT_TIMESTAMP,
-                        scanin=$2
+                        scanin=TRUE,
+                        processed=TRUE,
                         WHERE id = $1`,
-                        [id,true]
+                        [id]
                     );
                     return res.json({success:true,message:'Gatepass scan successful for entry'})
                 }
-            }
-            else{
-                await pool.query(
-                    `UPDATE student
-                    SET fine=fine+ $1
-                    WHERE enrollment=$2`,
-                    [100,enrollment]
-                )
-                return res.json({success:true,message:'Gatepass rejected for entry'})
             }
         }
     } catch (error) {
@@ -84,16 +76,51 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
     }
 })
 
-securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{
+securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{ // Student has someone other's pass
     try {
         const enrollment=req.body.enrollment
+        const fine=await pool.query(
+            "SELECT fine_rate from gatepass_rules WHERE id=$1",
+            [1]
+        )
         await pool.query(
             `UPDATE student
             SET fine=fine+ $1
             WHERE enrollment=$2`,
-            [100,enrollment]
+            [fine,enrollment]
         )
         return res.json({success:true,message:'Fine imposed successfully'})
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+})
+
+securityRouter.post('/processLate',authMiddleware,async(req,res)=>{ // whose token expired(beyond 23:59)
+    try {
+        const enrollment=req.body.enrollment
+
+        const curr_time=new Date(
+            date.getFullYear(),  
+            date.getMonth(),    
+            date.getDate(),      
+            date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
+        )
+        const fine=await pool.query(
+            "SELECT fine_rate from gatepass_rules WHERE id=$1",
+            [1]
+        )
+        await pool.query(
+            "UPDATE student SET fine=fine+$1 WHERE enrollment=$2",
+            [fine,enrollment]
+        )
+        await pool.query(
+            `UPDATE pass 
+            SET entry_time=$1,scanin=TRUE,processed=TRUE
+            WHERE enrollment=$2 AND processed=FALSE`,
+            [curr_time,enrollment]
+        )
     } catch (error) {
         return res.json({success:false,message:error.message})
     }

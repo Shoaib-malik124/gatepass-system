@@ -25,8 +25,7 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
         const passResponse = await pool.query(
             `SELECT * FROM pass
             WHERE enrollment = $1
-            AND processed = false
-            AND expiry_time > NOW()`,
+            AND processed = FALSE`,
             [enrollment]
         );
 
@@ -70,7 +69,7 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                         return res.json({success:false,message:'Fine overdue'})
                     }
                     else{
-                        const expiry = new Date(
+                        const expiry=new Date(
                             date.getFullYear(),  
                             date.getMonth(),    
                             date.getDate(),      
@@ -89,7 +88,16 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                             enrollment:enrollment
                         }
 
-                        const tokenExpiry=(expiry.getTime()-Date.now())
+                        const validity=new Date(
+                            date.getFullYear(),  
+                            date.getMonth(),    
+                            date.getDate(),      
+                            23,              
+                            59,            
+                            59
+                        )
+
+                        const tokenExpiry=(validity.getTime()-Date.now())
                         
                         const secret=process.env.JWT_SECRET
                         const token=await jwt.sign(tokenPayload,secret,{expiresIn:tokenExpiry})
@@ -113,8 +121,7 @@ studentRouter.get('/checkPass',authMiddleware,async(req,res)=>{
     const result = await pool.query(
       `SELECT * FROM pass
        WHERE enrollment = $1
-       AND processed = false
-       AND expiry_time > NOW()`,
+       AND processed = FALSE`,
       [enrollment]
     );
 
