@@ -35,7 +35,10 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     "SELECT * FROM pass WHERE id = $1",
                     [id]
                 )
-                if(result.rows[0].scanout==true){
+
+                if(result.rows.length==0)return res.json({success:false,message:'Gatepass already rejected'})
+                
+                else if(result.rows[0].scanout==true){
                     return res.json({success:false,message:'Gatepass already scanned for exit'})
                 }
                 else{
@@ -52,6 +55,7 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                 "SELECT * FROM pass WHERE id = $1",
                 [id]
             )
+            if(result.rows.length==0)return res.json({success:false,message:'This gatepass was rejected for exit'})
             const enrollment=result.rows[0].enrollment
 
             if(signal=='accept'){
@@ -63,13 +67,14 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                         `UPDATE pass
                         SET entry_time = CURRENT_TIMESTAMP,
                         scanin=TRUE,
-                        processed=TRUE,
+                        processed=TRUE
                         WHERE id = $1`,
                         [id]
                     );
                     return res.json({success:true,message:'Gatepass scan successful for entry'})
                 }
             }
+            // otherwise just apply fine on the bastard.
         }
     } catch (error) {
         return res.json({success:false,message:error.message})

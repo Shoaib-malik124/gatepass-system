@@ -5,76 +5,77 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
 
-  content: {
-    flex: 1,
-    justifyContent: "center",
+  scrollContent: {
     padding: 20,
+    paddingTop: 60,
+    paddingBottom: 40,
   },
 
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1e1e1e",
-    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 25,
   },
 
   card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    padding: 22,
+    marginBottom: 24,
 
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
 
-    elevation: 6,
+    elevation: 8,
   },
 
   iconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 15,
-    backgroundColor: "#eaf4ff",
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    backgroundColor: "#eef6ff",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 18,
   },
 
   cardTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 5,
+    fontSize: 21,
+    fontWeight: "700",
+    color: "#222",
+    marginBottom: 8,
   },
 
   subText: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#666",
-    marginBottom: 10,
+    marginBottom: 18,
+    lineHeight: 22,
   },
 
-  // NEW INPUT STYLE
   input: {
     width: "100%",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#f7f9fc",
     borderWidth: 1,
-    borderColor: "#dbe4ea",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
+    borderColor: "#dde6ee",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
     color: "#333",
-    marginTop: 12,
-    marginBottom: 10,
+    marginBottom: 14,
   },
 
   button: {
-    marginTop: 10,
     backgroundColor: "#4facfe",
-    paddingVertical: 12,
-    borderRadius: 12,
+    paddingVertical: 15,
+    borderRadius: 14,
     alignItems: "center",
   },
 
@@ -82,9 +83,13 @@ export const styles = StyleSheet.create({
     backgroundColor: "#ff5c5c",
   },
 
+  fineButton: {
+    backgroundColor: "#ff9f43",
+  },
+
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 });
