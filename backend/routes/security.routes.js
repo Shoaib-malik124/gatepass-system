@@ -79,10 +79,11 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
 securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{ // Student has someone other's pass
     try {
         const enrollment=req.body.enrollment
-        const fine=await pool.query(
+        const result=await pool.query(
             "SELECT fine_rate from gatepass_rules WHERE id=$1",
             [1]
         )
+        const fine=result.rows[0].fine_rate
         await pool.query(
             `UPDATE student
             SET fine=fine+ $1
@@ -107,10 +108,11 @@ securityRouter.post('/processLate',authMiddleware,async(req,res)=>{ // whose tok
             date.getMinutes(),
             date.getSeconds()
         )
-        const fine=await pool.query(
+        const result=await pool.query(
             "SELECT fine_rate from gatepass_rules WHERE id=$1",
             [1]
         )
+        const fine=result.rows[0].fine_rate
         await pool.query(
             "UPDATE student SET fine=fine+$1 WHERE enrollment=$2",
             [fine,enrollment]
