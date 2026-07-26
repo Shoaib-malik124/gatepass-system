@@ -56,7 +56,7 @@ export default function StudentLoginSignup({ navigation, route }) {
                     Alert.alert("Error", res.message);
 
                     if (res.message === 'This account already exists') {
-                        navigation.navigate('StudentLoginSignupScreen', {
+                        navigation.replace('StudentLoginSignupScreen', {
                             session: 'login',
                             role: 'student'
                         });

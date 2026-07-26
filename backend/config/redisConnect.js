@@ -1,21 +1,17 @@
-import { createClient } from 'redis';
+import { createClient } from "redis"
 import 'dotenv/config'
 
 let client;
 
-export const initRedis = async () => {
+export const initRedis=async()=>{
     client = createClient({
-        username: process.env.CLIENT_USERNAME,
-        password: process.env.CLIENT_PASSWORD,
-        socket: {
-            host: process.env.CLIENT_HOST,
-            port: process.env.CLIENT_PORT,
-        }
+      url: process.env.REDIS_URL
     });
 
-    client.on('error', err => console.log('Redis Error:', err));
-
-    await client.connect();
+    client.on("error", function(err) {
+      console.log('Redis Error:', err);
+    });
+    await client.connect()
 };
 
 export const getRedis = () => client;

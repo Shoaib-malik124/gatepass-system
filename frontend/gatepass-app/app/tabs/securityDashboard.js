@@ -1,15 +1,38 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert,TextInput } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from '../stylesheets/securityDashboard_styles.js';
 import * as SecureStore from 'expo-secure-store';
-// import handleSecurityDashboard from '../../apis/securityDashboardApi.js';
-import { useState } from 'react';
-import { Picker } from '@react-native-picker/picker'; // Added import
+import { Picker } from '@react-native-picker/picker';
+import { handleDecisionDashboard } from '../../apis/securityDashboardApi.js';
+import { useState,useRef,useEffect } from 'react';
+
 
 export default function SecurityDashboard({ navigation, route }) {
   const { token } = route.params || {};
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState(null)
+  const [enrollment,setEnrollment]=useState('')
+  const [loading,setLoading]=useState(false)
+  const isMounted=useRef(false)
+
+  const handlePress=async ()=>{
+    if (isMounted.current) setLoading(true)
+    try {
+      const response=await handleDecisionDashboard(enrollment,token,'processLate')
+      Alert.alert(response.message)
+      if(isMounted.current) setLoading(false)
+    } catch (error) {
+      if(isMounted.current)setLoading(false)
+      Alert.alert('Something Went wrong')
+    }
+  }
+
+  useEffect(()=>{
+    isMounted.current=true
+    return ()=>{
+      isMounted.current=false
+    }
+  },[]);
 
   return (
     <LinearGradient
@@ -66,7 +89,6 @@ export default function SecurityDashboard({ navigation, route }) {
 
           {/* Scan Button */}
           <TouchableOpacity
-            // Fixed conditional styling syntax using array [...]
             style={[styles.button, session === null && styles.buttonDisabled]}
             disabled={session === null}
             onPress={() => {
@@ -76,6 +98,35 @@ export default function SecurityDashboard({ navigation, route }) {
           >
             <Text style={styles.buttonText}>Open Scanner</Text>
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.title}>
+            Process Late Students
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter enrollment"
+            placeholderTextColor="#999"
+            value={enrollment}
+            onChangeText={setEnrollment}
+          />
+
+          <TouchableOpacity
+            style={[styles.button, enrollment === '' && styles.buttonDisabled]}
+            disabled={enrollment===''}
+            onPress={handlePress}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>
+                Process Late
+              </Text>
+            )}
+          </TouchableOpacity>
+
         </View>
 
       </ScrollView>

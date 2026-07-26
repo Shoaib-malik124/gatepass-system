@@ -3,7 +3,6 @@ import RNPickerSelect from 'react-native-picker-select';
 import { useState } from 'react';
 import AppHeader from './header.js';
 import { styles } from '../stylesheets/roleSelect_styles.js';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store'; // Device's local storage.
 import {jwtDecode} from 'jwt-decode'
 import handleStudentDashboard from '../../apis/studentDashboardApi.js';
@@ -40,19 +39,16 @@ export default function RoleSelectScreen({navigation}) {
             async() =>{
               const token=await SecureStore.getItemAsync('token');
               if(token){
-                const decodedToken=jwtDecode(token) // not powerful as the jwt.verify, but can give the expiry.
-                const current_time=Date.now()/1000 // jwt stores creation time and expiry time in seconds.
+                const decodedToken=jwtDecode(token) 
+                const current_time=Date.now()/1000 
                 if(current_time<decodedToken.exp){
                   if(role=='student'){
-                    // const res=await handleStudentDashboard(token,'checkPass','get')
                     navigation.navigate('StudentDashboardScreen',{token})
                   }
                   else if(role=='admin'){
-                    // navigate to the admin dashboard.
                     navigation.navigate('AdminDashboardScreen',{token})
                   }
                   else{
-                    // navigate to the security dashboard.
                     navigation.navigate('SecurityDashboardScreen',{token})
                   }
                 }
@@ -62,7 +58,6 @@ export default function RoleSelectScreen({navigation}) {
                     navigation.navigate('StudentAuthScreen',{role})
                   }
                   else{
-                    // navigate to the admin/security login screen.
                     navigation.navigate('AdminSecurityLoginScreen',{role})
                   }
                 }

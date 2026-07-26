@@ -74,14 +74,20 @@ securityRouter.post('/scanGatePass',authMiddleware,async(req,res)=>{
                     return res.json({success:true,message:'Gatepass scan successful for entry'})
                 }
             }
-            // otherwise just apply fine on the bastard.
+            else{
+                // corrupted gatepass
+                await pool.query(
+                    'DELETE FROM pass WHERE id=$1',
+                    [id]
+                )
+            }
         }
     } catch (error) {
         return res.json({success:false,message:error.message})
     }
 })
 
-securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{ // Student has someone other's pass
+securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{ 
     try {
         const enrollment=req.body.enrollment
         const result=await pool.query(
@@ -104,15 +110,6 @@ securityRouter.post('/imposeFine',authMiddleware,async(req,res)=>{ // Student ha
 securityRouter.post('/processLate',authMiddleware,async(req,res)=>{ // whose token expired(beyond 23:59)
     try {
         const enrollment=req.body.enrollment
-
-        const curr_time=new Date(
-            date.getFullYear(),  
-            date.getMonth(),    
-            date.getDate(),      
-            date.getHours(),
-            date.getMinutes(),
-            date.getSeconds()
-        )
         const result=await pool.query(
             "SELECT fine_rate from gatepass_rules WHERE id=$1",
             [1]
@@ -124,10 +121,11 @@ securityRouter.post('/processLate',authMiddleware,async(req,res)=>{ // whose tok
         )
         await pool.query(
             `UPDATE pass 
-            SET entry_time=$1,scanin=TRUE,processed=TRUE
-            WHERE enrollment=$2 AND processed=FALSE`,
-            [curr_time,enrollment]
+            SET entry_time=CURRENT_TIMESTAMP,scanin=TRUE,processed=TRUE
+            WHERE enrollment=$1 AND processed=FALSE`,
+            [enrollment]
         )
+        return res.json({success:true,message:'Late processing successful'})
     } catch (error) {
         return res.json({success:false,message:error.message})
     }

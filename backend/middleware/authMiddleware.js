@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 export const authMiddleware=async(req,res,next)=>{
     try {
-        const authenticationData=req.headers.authorization
+        const authenticationData=req.headers?.authorization
         if(!authenticationData){
             return res.json({success:false,message:'No token provided'})
         }

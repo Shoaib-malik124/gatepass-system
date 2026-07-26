@@ -26,7 +26,7 @@ export default function StudentOtpSend({ navigation, route }) {
 
             if (res.success) {
                 Alert.alert("Success", `OTP sent to ${email}`)
-                navigation.navigate('StudentVerifyOtpScreen', { email })
+                navigation.replace('StudentVerifyOtpScreen', { email })
             } else {
                 Alert.alert("Error", res.message)
             }

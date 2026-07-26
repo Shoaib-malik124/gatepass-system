@@ -21,7 +21,7 @@ export default function SecurityRemove({route}){
     const handlePress=async()=>{
         if(isMounted.current)setLoading(true)
         try {
-            const res=await handleAdminDashboardSecurity(token,'removeSecurity','post',email,'')
+            const res=await handleAdminDashboardSecurity(token,'removeSecurity',email,'')
             if(isMounted.current)setLoading(false)
             Alert.alert(res.message)
             

@@ -29,10 +29,8 @@ export default function AdminSecurityLogin({navigation,route}){
             if(isMounted.current)setLoading(false)
 
             if(res.success){
-                //Get the token from res,store in local and navigate to the admin/security dashboard.
                 const token=res.token
                 await SecureStore.setItemAsync(`token`,token);
-                //navigate to admin/security dashboard.
                 Alert.alert("Login successful")
                 if(role=='admin')navigation.replace('AdminDashboardScreen',{token});
                 else navigation.replace('SecurityDashboardScreen',{token})

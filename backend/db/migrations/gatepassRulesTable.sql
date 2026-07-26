@@ -3,5 +3,6 @@ CREATE TABLE gatepass_rules(
   permission BOOLEAN DEFAULT TRUE,
   min_time TIME NOT NULL,
   max_time TIME NOT NULL,
-  fine_rate INTEGER DEFAULT 10
+  fine_rate INTEGER DEFAULT 10,
+  max_fine INTEGER DEFAULT 1000
 );

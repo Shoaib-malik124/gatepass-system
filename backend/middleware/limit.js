@@ -7,6 +7,6 @@ export const limit=rateLimit({
         success:false,
         message:"Too many requests,check tommorow"
     },
-    standardHeaders:true,//Info about rate limiting.
+    standardHeaders:true,
     legacyHeaders:false
 })

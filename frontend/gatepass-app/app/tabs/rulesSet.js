@@ -11,6 +11,7 @@ export default function SetRules({ navigation, route }) {
   const [end, setEnd] = useState("");
   const [fine, setFine] = useState("");
   const [loading,setLoading]=useState(false)
+  const [maxFine,setMaxFine]=useState(0)
   const isMounted=useRef(false)
 
   const { token } = route.params || {};
@@ -27,7 +28,7 @@ export default function SetRules({ navigation, route }) {
   const handlePress=async()=>{
     if(isMounted.current)setLoading(true)
     try {
-      const res=await handleRulesSet(token,permission,start,end,fine)
+      const res=await handleRulesSet(token,permission,start,end,fine,maxFine)
       if(isMounted.current)setLoading(false)
       Alert.alert(res.message)
     } catch (error) {
@@ -81,6 +82,15 @@ export default function SetRules({ navigation, route }) {
           placeholder="Enter fine amount"
           value={fine}
           onChangeText={setFine}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Maximum Student Fine</Text>
+        <TextInput
+          placeholder="Enter the maximum allowed fine  amount for students"
+          value={maxFine}
+          onChangeText={setMaxFine}
           keyboardType="numeric"
           style={styles.input}
         />

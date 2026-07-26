@@ -19,65 +19,63 @@ adminRouter.get('/delete',authMiddleware,async(req,res)=>{
     }
 })
 
-adminRouter.post('/addSecurity',authMiddleware,async(req,res)=>{
+adminRouter.post('/addSecurity', authMiddleware, async (req, res) => {
     try {
-        const email=req.body.email
-        const password=req.body.password
-        if((!email)||(!password)){
-            return res.json({success:false,message:'Incomplete credentials'})
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.json({ success: false, message: 'Incomplete credentials' });
         }
-        else{
-            const result=await pool.query(
-               "SELECT * FROM security WHERE email=$1",
-               [email]
-            );
-            if(result.rows.length>0){
-                return res.json({success:false,message:'This email is already in use'})
-            }
-            else{
-                const hashedPassword=await bcrypt.hash(password,10)
-                await pool.query(
-                   "INSERT INTO security (email, password) VALUES ($1, $2)",
-                    [email,hashedPassword]
-                );
-                const response=await sendSecurityOnMail(email,password)
-                return res.json(response)
-            }
+        const result = await pool.query(
+            "SELECT * FROM security WHERE email = $1",
+            [email]
+        );
+
+        if (result.rows.length > 0) {
+            return res.json({ success: false, message: 'This email is already in use' });
         }
 
-    } catch (error) {
-        // If account was created but mail send failed, then delete the security account.
-        return res.json({success:false,message:error.message})
-    }
-})
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await pool.query(
+            "INSERT INTO security (email, password) VALUES ($1, $2)",
+            [email, hashedPassword]
+        );
 
-adminRouter.post('/removeSecurity',authMiddleware,async(req,res)=>{
-    try {
-        const email=req.body.email
-        if(!email){
-            return res.json({success:false,message:'No email provided'})
-        }
-        else{
-            const result=await pool.query(
-                "DELETE FROM security WHERE email = $1",
-                [email]
-            );
-            if(result.rowCount===0){
-               return res.json({success:false,message:'This account does not exist'})
-            }
-            else{
-               const response=await sendSecurityOffMail(email)
-               return res.json(response)
-            }
-        }
+        const response = await sendSecurityOnMail(email, password);
+        return res.json(response);
+
     } catch (error) {
-        return res.json({success:false,message:error.message})
+        return res.json({ success: false, message: error.message });
     }
-})
+});
+
+adminRouter.post('/removeSecurity', authMiddleware, async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.json({ success: false, message: 'No email provided' });
+        }
+        const result = await pool.query(
+            "DELETE FROM security WHERE email = $1",
+            [email]
+        );
+
+        if (result.rowCount === 0) {
+            return res.json({ success: false, message: 'This account does not exist' });
+        }
+
+        const response = await sendSecurityOffMail(email);
+        return res.json(response);
+
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+});
 
 adminRouter.post('/setRules',authMiddleware,async(req,res)=>{
     try {
-      let {movement,start,end,fine}=req.body
+      let {movement,start,end,fine,max_fine}=req.body
       
       const response=await pool.query(
         "SELECT permission,min_time,max_time,fine_rate FROM gatepass_rules WHERE id= $1",
@@ -88,10 +86,11 @@ adminRouter.post('/setRules',authMiddleware,async(req,res)=>{
       if(!start)start=response.rows[0].min_time
       if(!end)end=response.rows[0].max_time
       if(!fine)fine=response.rows[0].fine_rate
+      if(!max_fine)max_fine=response.rows[0].max_fine
 
       await pool.query(
-        "UPDATE gatepass_rules SET permission=$1,min_time=$2,max_time=$3,fine_rate=$4 WHERE id=$5",
-        [movement,start,end,fine,1]
+        "UPDATE gatepass_rules SET permission=$1,min_time=$2,max_time=$3,fine_rate=$4,max_fine=$5 WHERE id=$6",
+        [movement,start,end,fine,max_fine,1]
       )
 
       return res.json({success:true,message:'Gatepass rules updated successfully'})

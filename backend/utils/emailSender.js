@@ -18,7 +18,7 @@ export const sendOtpEmail = async (targetEmail, otp) => {
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px;">
         <h2 style="color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">NIT Srinagar Digital Gatepass</h2>
         <p>Hello Student,</p>
-        <p>You are requesting a digital gatepass. Please use the One-Time Password (OTP) below to verify your identity:</p>
+        <p>You are requesting to create an account for the  Digital Gatepass Management App. Please use the One-Time Password (OTP) below to verify your identity:</p>
         <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
             <h1 style="letter-spacing: 8px; color: #333; margin: 0; font-size: 32px;">${otp}</h1>
         </div>
@@ -48,7 +48,7 @@ export const sendSecurityOnMail=async(targetEmail,password)=>{
       <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px;">
         <h2 style="color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px;">NIT Srinagar Digital Gatepass</h2>
         <p>Hello Security guard,</p>
-        <p>Here is the your password for Digital Gatepass app:</p>
+        <p>Here is the your password for Digital Gatepass app,valid till your next off:</p>
         <div style="background: #f9f9f9; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
             <h1 style="letter-spacing: 8px; color: #333; margin: 0; font-size: 32px;">${password}</h1>
         </div>

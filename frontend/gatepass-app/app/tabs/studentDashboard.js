@@ -15,7 +15,7 @@ export default function StudentDashboard({ navigation,route }) {
   const [loading,setLoading]=useState(false)
   const isMounted = useRef(false)
 
-  useFocusEffect(// runs on every navigation.
+  useFocusEffect(
     useCallback(
       ()=>{
         const checkPass = async () => {
@@ -32,7 +32,7 @@ export default function StudentDashboard({ navigation,route }) {
         };
 
         checkPass()
-      },[token] // For each login session,recreate and memorize this method.Otherwise, token will one and final for all users.
+      },[token]
     )
   );
 
@@ -112,8 +112,8 @@ export default function StudentDashboard({ navigation,route }) {
           onPress={
             async()=>{
               const res=await handleStudentDashboard(token,'delete','get');
-              await SecureStore.deleteItemAsync('token');
               if(res.success==true){
+                await SecureStore.deleteItemAsync('token')
                 navigation.reset({
                   index:0,
                   routes:[
@@ -124,7 +124,7 @@ export default function StudentDashboard({ navigation,route }) {
                 });
               }
               else{
-                console.log(res.message)
+                Alert.alert("Something went wrong")
               }
             }
           }
