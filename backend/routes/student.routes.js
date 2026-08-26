@@ -19,24 +19,19 @@ studentRouter.get('/delete',authMiddleware,async(req,res)=>{
     }
 })
 
-studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
+studentRouter.get('/requestPass',authMiddleware,async(req,res)=>{
     try {
         const enrollment=req.user
-        const permissionResult=await pool.query(
-            "SELECT permission FROM gatepass_rules WHERE id=$1",
+        const result=await pool.query(
+            "SELECT * FROM gatepass_rules WHERE id=$1",
             [1]
         );
-        const permission=permissionResult.rows[0].permission
+        const permission=result.rows[0].permission
 
         if(!permission){
             return res.json({success:false,message:'Movement is restricted'})
         }
         else{
-            const result=await pool.query(
-                "SELECT min_time,max_time FROM gatepass_rules WHERE id=$1",
-                [1]
-            );
-
             const date=new Date()
             const start_time_string=result.rows[0].min_time,end_time_string=result.rows[0].max_time
 
@@ -56,11 +51,7 @@ studentRouter.post('/requestPass',authMiddleware,async(req,res)=>{
                     [enrollment]
                 )
                 const fine=fineResult.rows[0].fine
-                const maxFineResult=await pool.query(
-                    "SELECT max_fine FROM gatepass_rules WHERE id=$1",
-                    [1]
-                )
-                const maxAllowedFine=maxFineResult.rows[0].max_fine
+                const maxAllowedFine=result.rows[0].max_fine
                 if(fine>=maxAllowedFine){
                     return res.json({success:false,message:'Fine overdue'})
                 }

@@ -4,8 +4,7 @@ export const checkPass = async (enrollment) => {
     const result = await pool.query(
       `SELECT * FROM pass
        WHERE enrollment = $1
-       AND processed = false
-       AND expiry_time > NOW()`,
+       AND processed = false`,
       [enrollment]
     );
 

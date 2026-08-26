@@ -46,7 +46,7 @@ export default function StudentDashboard({ navigation,route }) {
   const handleApplyPress=async()=>{
     if(isMounted.current)setLoading(true)
     try {
-      const res=await handleStudentDashboard(token,'requestPass','post');
+      const res=await handleStudentDashboard(token,'requestPass','get');
       if(isMounted.current)setLoading(false)
 
       if(res.success==true){
